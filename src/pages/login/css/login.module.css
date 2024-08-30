@@ -1,0 +1,13 @@
+.image-container {
+  height: 100vh; /* Full viewport height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Prevents scrollbars */
+}
+
+.image-container img {
+  height: 100%; /* Full height of the container */
+  width: 100%; /* Full width of the container */
+  object-fit: cover; /* Ensures the image covers the container */
+}
