@@ -7,6 +7,8 @@ import InfoCards from '../pages/info/Info';
 import ProtectedRoutes from './private-routes';
 import Test from '../pages/test/Test';
 import ForgotPassword from '../pages/forgotPassword/ForgotPassword';
+import IdentifyParticulateOne from '../pages/identify-particulate/IdentifyParticulateOne';
+import IdentifyParticulateTwo from '../pages/identify-particulate/IdentifyParticulateTwo';
 
 function PublicRoutes() {
   const router = createBrowserRouter([
@@ -21,7 +23,11 @@ function PublicRoutes() {
       path: '/nsso-secured/',
       element: <ProtectedRoutes />,
       errorElement: <PageNotFound />,
-      children: [{ path: 'test', element: <Test /> }],
+      children: [
+        { path: 'test', element: <Test /> },
+        { path: 'identify-particulate-1', element: <IdentifyParticulateOne /> },
+        { path: 'identify-particulate-2', element: <IdentifyParticulateTwo /> },
+      ],
     },
   ]);
   return (
