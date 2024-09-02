@@ -36,7 +36,7 @@ function SideBar() {
           onClick={() => navigate('/nsso-secured/identify-particulate-1')}
         >
           <a
-            //   href='#'
+            href='javascript:void(0)'
             className='nav-link d-flex'
             aria-current='page'
           >
@@ -49,7 +49,7 @@ function SideBar() {
           onClick={() => navigate('/nsso-secured/identify-particulate-2')}
         >
           <a
-            //   href='#'
+            href='javascript:void(0)'
             className='nav-link active d-flex'
             aria-current='page'
           >

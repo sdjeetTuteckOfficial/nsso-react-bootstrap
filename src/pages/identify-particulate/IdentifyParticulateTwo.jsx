@@ -5,9 +5,7 @@ export default function IdentifyParticulateTwo() {
       elit. Veritatis perferendis voluptate, eius at quasi omnis ipsa nisi
       voluptas quam doloribus sunt, non assumenda quis vel officiis cupiditate
       molestias sit deleniti.
-      <h1>
-        TWOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-      </h1>
+      <h1>TWOOOOOOOOOOOOOOOOOOO</h1>
     </div>
   );
 }

@@ -5,9 +5,7 @@ export default function IdentifyParticulateOne() {
       elit. Doloribus itaque vero repellendus dolorem quam delectus ipsam
       obcaecati optio eos ea odit ut, animi dolorum labore vitae sequi minima
       nulla neque.
-      <h1>
-        ONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-      </h1>
+      <h1>ONEEEEEEEEEEEEEEEEE</h1>
     </div>
   );
 }
