@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import login_image from '../../assets/img.jpg';
 import loginClass from './css/login.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const schema = yup.object().shape({
   email: yup
@@ -24,9 +25,11 @@ function LoginForm() {
   } = useForm({
     resolver: yupResolver(schema),
   });
+  const navigate = useNavigate();
 
   const onSubmit = (data) => {
     console.log(data);
+    navigate('/nsso-secured/test');
   };
 
   return (
