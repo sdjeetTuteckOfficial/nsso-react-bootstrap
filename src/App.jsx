@@ -1,8 +1,6 @@
-// import Test from './pages/test/Test';
-import LoginForm from './pages/login/Login';
-// import InfoCards from './pages/info/Info';
+import PublicRoutes from './routes/public-routes';
 function App() {
-  return <LoginForm />;
+  return <PublicRoutes />;
 }
 
 export default App;
