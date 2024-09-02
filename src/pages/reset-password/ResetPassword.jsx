@@ -6,6 +6,7 @@ import authImg from '../../assets/authImg.svg';
 import logo from '../../assets/logo.svg';
 import resetPasswordClass from './css/resetPassword.module.css';
 import Card from 'react-bootstrap/Card';
+import { useNavigate } from 'react-router-dom';
 
 const schema = yup.object().shape({
   password: yup
@@ -29,6 +30,8 @@ const ForgotPassword = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  const navigate = useNavigate();
 
   const onSubmit = (data) => {
     console.log(data);
@@ -102,7 +105,7 @@ const ForgotPassword = () => {
                 </Button>
               </Form>
               <div className='card border-0 d-flex justify-content-center align-items-center mt-3 w-100'>
-                <p className={resetPasswordClass['p-know']}>Know your password? Login Now</p>
+                <p className={resetPasswordClass['p-know']} onClick={() => navigate('/')}>Know your password? Login Now</p>
               </div>
               </div>
           </div>
