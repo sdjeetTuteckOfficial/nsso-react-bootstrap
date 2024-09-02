@@ -1,0 +1,111 @@
+@import url(../css/variable.less);
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+bth:focus {
+  outline: none;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+
+  li {
+    list-style-type: none;
+  }
+}
+.text-success {
+  color: @successColor !important;
+}
+
+.pt-50 {
+  padding-top: 50px;
+}
+
+.pb-50 {
+  padding-bottom: 50px;
+}
+
+.blue-bg {
+  background-color: @SiteBlue;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.siteLogo {
+  img {
+    width: 100%;
+  }
+}
+.SiteContent {
+  padding-left: 262px;
+  width: calc(100% - 262px);
+}
+.sideBar {
+  background-color: @baseColor !important;
+  width: 262px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  ul.siteNav {
+    overflow-x: scroll;
+    a.link-body-emphasis,
+    a.nav-link {
+      color: @color1 !important;
+      span {
+        font-weight: 600;
+        font-size: 13px;
+      }
+      &.nav-link.active {
+        background-color: @SiteLightBlue;
+        color: @SiteBlue !important;
+      }
+      &:hover {
+        color: @SiteBlue !important;
+      }
+    }
+    .nav-item {
+      margin: 2px 0;
+      width: 100%;
+    }
+  }
+}
+.textAvatar {
+  display: flex;
+  width: 30px;
+  height: 30px;
+  background-color: @SiteLightBlue;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  color: @SiteBlue;
+  font-weight: 600;
+  font-size: 14px;
+}
+.profile-drop {
+  .text-truncate {
+    width: 190px;
+    display: block;
+    font-size: 13px;
+  }
+}
+.text-grey {
+  color: @color1;
+}

@@ -1,7 +1,13 @@
 import PropTypes from 'prop-types';
+import SideBar from '../sidebar/Sidebar';
 
 export default function Layout(props) {
-  return <div>{props.children}</div>;
+  return (
+    <div>
+      <SideBar />
+      {props.children}
+    </div>
+  );
 }
 
 Layout.propTypes = {
