@@ -6,11 +6,17 @@ import LoginForm from '../pages/login/Login';
 import InfoCards from '../pages/info/Info';
 import ProtectedRoutes from './private-routes';
 import Test from '../pages/test/Test';
+import ForgotPassword from '../pages/forgotPassword/ForgotPassword';
 
 function PublicRoutes() {
   const router = createBrowserRouter([
     { path: '/', element: <LoginForm />, errorElement: <PageNotFound /> },
     { path: '/info', element: <InfoCards />, errorElement: <PageNotFound /> },
+    {
+      path: '/forgot-password',
+      element: <ForgotPassword />,
+      errorElement: <PageNotFound />,
+    },
     {
       path: '/nsso-secured/',
       element: <ProtectedRoutes />,
