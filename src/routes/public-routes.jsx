@@ -7,6 +7,7 @@ import InfoCards from '../pages/info/Info';
 import ProtectedRoutes from './private-routes';
 import Test from '../pages/test/Test';
 import ForgotPassword from '../pages/forgotPassword/ForgotPassword';
+import ResetPassword from '../pages/reset-password/ResetPassword';
 import IdentifyParticulateOne from '../pages/identify-particulate/IdentifyParticulateOne';
 import IdentifyParticulateTwo from '../pages/identify-particulate/IdentifyParticulateTwo';
 
@@ -17,6 +18,11 @@ function PublicRoutes() {
     {
       path: '/forgot-password',
       element: <ForgotPassword />,
+      errorElement: <PageNotFound />,
+    },
+    {
+      path: '/reset-password',
+      element: <ResetPassword />,
       errorElement: <PageNotFound />,
     },
     {

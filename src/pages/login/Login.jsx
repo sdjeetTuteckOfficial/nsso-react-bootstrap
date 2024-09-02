@@ -102,7 +102,7 @@ function LoginForm() {
                 </Button>
               </Form>
               <div className='card border-0 d-flex justify-content-center align-items-center mt-3 w-100'>
-                <p className={loginClass['p-know']}>Forgot Password</p>
+                <p className={loginClass['p-know']} onClick={() => navigate('/forgot-password')}>Forgot Password</p>
               </div>
               </div>
           </div>
