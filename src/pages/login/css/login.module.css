@@ -1,13 +1,38 @@
+.main-container {
+  box-sizing: border-box;
+}
+
+.bodyContainer {
+  box-sizing: border-box;
+  border: 1px solid black;
+}
+
+.p-know {
+  color: #2471DD;
+}
+
+
 .image-container {
-  height: 100vh; /* Full viewport height */
+  height: 100vh;
+  /* Full viewport height */
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden; /* Prevents scrollbars */
+  overflow: hidden;
+  /* Prevents scrollbars */
+  box-sizing: border-box;
+  padding: 20%;
 }
 
-.image-container img {
-  height: 100%; /* Full height of the container */
-  width: 100%; /* Full width of the container */
-  object-fit: cover; /* Ensures the image covers the container */
+.imgSubContainer {
+  margin: 20%;
+}
+
+.image-container imgSubContainer img {
+  height: 100%;
+  /* Full height of the container */
+  width: 100%;
+  /* Full width of the container */
+  object-fit: cover;
+  /* Ensures the image covers the container */
 }
