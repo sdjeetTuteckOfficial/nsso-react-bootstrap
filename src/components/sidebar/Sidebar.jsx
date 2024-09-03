@@ -85,6 +85,15 @@ function SideBar() {
             <span>Investment Activity Outlook</span>
           </a>
         </li>
+        <li
+          className='nav-item'
+          onClick={() => navigate('/nsso-secured/investment-activity-strategy')}
+        >
+          <a href='javascript:void(0)' className='nav-link link-body-emphasis d-flex'>
+            <i className='bi bi-question-circle-fill me-2' />
+            <span>Investment Activity Strategy</span>
+          </a>
+        </li>
       </ul>
 
       <NavDropdown
