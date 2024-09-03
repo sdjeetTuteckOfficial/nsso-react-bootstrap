@@ -5,12 +5,12 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 
-export default function InvestmentActivityOutlook() {
+export default function InvestmentActivityStrategy() {
   return (
     <>
       <Form className="siteForm">
         <div className="d-flex mb-2">
-          <h3 className="page-title">Investment Activity Outlook</h3>
+          <h3 className="page-title">Investment Activity Strategy</h3>
           <Button variant="light">
             Save & Continue <i class="bi bi-arrow-right-short"></i>
           </Button>
@@ -25,53 +25,75 @@ export default function InvestmentActivityOutlook() {
               <Row>
                 <Form.Group as={Col} sm="6">
                   <Form.Label>
-                    Assets Purchasing Activity Expectations in the next FY
-                    (e.g., 2025-26){" "}
+                    Preferred Investment Strategy in the current FY (e.g.,
+                    2024-25){" "}
                   </Form.Label>
                   <Form.Select aria-label="Default select example">
                     <option>Open this select menu</option>
-                    <option value="1">Buy more</option>
-                    <option value="2">About the same</option>
-                    <option value="3">Buy less</option>
-                    <option value="4">No intention to buy</option>
-                  </Form.Select>
-                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group as={Col} sm="6">
-                  <Form.Label>For Buy More : </Form.Label>
-                  <Form.Select aria-label="Default select example">
-                    <option>Open this select menu</option>
-                    <option value="1">Income Generation</option>
-                    <option value="2">Diversification</option>
-                    <option value="3">Upgradation</option>
+                    <option value="1">Core</option>
+                    <option value="2">Value-added</option>
+                    <option value="3">Opportunistic</option>
+                    <option value="4">
+                      Distressed assets and non-performing loans
+                    </option>
+                    <option value="5">Debt strategies</option>
                     <option value="other">Others</option>
                   </Form.Select>
                   <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group as={Col} sm="6">
-                  <Form.Label>For Buy Less : </Form.Label>
-                  <Form.Select aria-label="Default select example">
-                    <option>Open this select menu</option>
-                    <option value="1">Income Generation</option>
-                    <option value="2">Diversification</option>
-                    <option value="3">Upgradation</option>
-                    <option value="other">Others</option>
-                  </Form.Select>
-                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                  <Form.Label>Please specify</Form.Label>
+                  <InputGroup className="mb-3">
+                    <Form.Control
+                      placeholder="Please specify"
+                      aria-label="Phone No."
+                      aria-describedby="basic-addon1"
+                      type="text"
+                    />
+                  </InputGroup>
                 </Form.Group>
 
                 <Form.Group as={Col} sm="6">
                   <Form.Label>
-                    Assets Selling Activity Expectations in the next FY (e.g.,
-                    2025-26){" "}
+                    Objective of investment in the current FY (e.g., 2024-25){" "}
                   </Form.Label>
                   <Form.Select aria-label="Default select example">
                     <option>Open this select menu</option>
-                    <option value="1">Sell more</option>
-                    <option value="2">Sell less</option>
-                    <option value="2">No intension to sell</option>
+                    <option value="1">Income Generation</option>
+                    <option value="2">Diversification</option>
+                    <option value="3">Upgradation</option>
+                    <option value="other">Others</option>
+                  </Form.Select>
+                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                </Form.Group>
+
+                <Form.Group as={Col} sm="6">
+                  <Form.Label>Please specify</Form.Label>
+                  <InputGroup className="mb-3">
+                    <Form.Control
+                      placeholder="Please specify"
+                      aria-label="Phone No."
+                      aria-describedby="basic-addon1"
+                      type="text"
+                    />
+                  </InputGroup>
+                </Form.Group>
+
+                <Form.Group as={Col} sm="6">
+                  <Form.Label>
+                    Most preferred States for investment in the country in the
+                    current FY (e.g., 2024-25)?{" "}
+                  </Form.Label>
+                  <Form.Select aria-label="Default select example">
+                    <option>Open this select menu</option>
+                    <option value="1">Seasonal operations</option>
+                    <option value="2">
+                      When did this enterprise close for the season?
+                    </option>
+                    <option value="2">
+                      When does this enterprise expect to resume operations?
+                    </option>
                   </Form.Select>
                   <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                 </Form.Group>

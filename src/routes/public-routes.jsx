@@ -14,6 +14,7 @@ import CapitalExpenditureIntention from '../pages/capital-expenditure-intention/
 import CapitalExpenditureOutlook from '../pages/capital-expenditure-outlook/CapitalExpenditureOutlook';
 import InvestmentActivityOutlook from '../pages/investment-activity-outlook/InvestmentActivityOutlook';
 import IdentifyParticulateEntry from '../pages/indentify-particulate-final/IdentifyParticulateEntry';
+import InvestmentActivityStrategy from '../pages/investment-activity-strategy/InvestmentActivityStrategy';
 
 function PublicRoutes() {
   const router = createBrowserRouter([
@@ -51,6 +52,10 @@ function PublicRoutes() {
         {
           path: 'investment-activity-outlook',
           element: <InvestmentActivityOutlook />,
+        },
+        {
+          path: 'investment-activity-strategy',
+          element: <InvestmentActivityStrategy />,
         },
       ],
     },
