@@ -5,12 +5,12 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 
-export default function IdentifyParticulateTwo() {
+export default function IdentifyParticulateEntry() {
   return (
     <>
       <Form className='siteForm'>
         <div className='d-flex mb-2'>
-          <h3 className='page-title'>Identification Particulars 1</h3>
+          <h3 className='page-title'>Identification Particulars Entry</h3>
           <Button variant='light'>
             Save & Continue <i className='bi bi-arrow-right-short'></i>
           </Button>

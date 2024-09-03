@@ -75,9 +75,11 @@ function SideBar() {
           <Nav.Link  className='nav-link d-flex'>
             <i className='bi bi-question-circle-fill me-2' />
             <span>Investment Activity Outlook</span>
+
           </Nav.Link>
         </Nav.Item>
       </Nav>
+
 
       <NavDropdown
         id='nav-dropdown-dark-example'
