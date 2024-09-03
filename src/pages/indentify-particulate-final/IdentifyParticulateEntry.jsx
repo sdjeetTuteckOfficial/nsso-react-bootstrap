@@ -1,38 +1,45 @@
-import Row from 'react-bootstrap/Row';
-import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import { Col } from 'react-bootstrap';
-import BasicInformationCard from './basic-information/BasicInformationCard';
-import { enterpriseData, contactInfoData } from './demo-data/data';
-import { useForm, Controller } from 'react-hook-form';
+import { useState } from 'react';
+import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useState } from 'react';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import { Row, Col, Card } from 'react-bootstrap';
+import BasicInformationCard from './basic-information/BasicInformationCard';
+import { enterpriseData, contactInfoData } from './demo-data/data';
+import SeasonalOperationDetails from './operations-form/seasonal-details-form/SeasonalDetailsForm';
 
 const schema = yup.object().shape({
   operationalStatus: yup.string().required('Operational status is required'),
   additionalInfo: yup.string().when('operationalStatus', {
-    is: 'non-operational',
-    then: yup
-      .string()
-      .required('Additional info is required when not operational'),
-    otherwise: yup.string().notRequired(),
+    is: (val) => val === 'non-operational',
+    then: () =>
+      yup.string().required('Additional info is required when not operational'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  closeDate: yup.string().when('additionalInfo', {
+    is: (val) => val === 'seasonal',
+    then: () => yup.date().required('Close date is required'),
+    otherwise: () => yup.date().notRequired(),
+  }),
+  resumeDate: yup.string().when('additionalInfo', {
+    is: (val) => val === 'seasonal',
+    then: () => yup.date().required('Resume date is required'),
+    otherwise: () => yup.date().notRequired(),
   }),
 });
 
 export default function IdentifyParticulateEntry() {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [whyNotOperational, setWhyNotOperational] = useState('');
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const methods = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       operationalStatus: '',
       additionalInfo: '',
+      closeDate: '',
+      resumeDate: '',
     },
   });
 
@@ -41,12 +48,16 @@ export default function IdentifyParticulateEntry() {
   };
 
   const handleStatusChange = (value) => {
+    if (value === 'operational') {
+      //do setValues
+      setWhyNotOperational('');
+    }
     setShowDropdown(value === 'non-operational');
   };
 
   return (
-    <>
-      <Form className='siteForm' onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider {...methods}>
+      <Form className='siteForm' onSubmit={methods.handleSubmit(onSubmit)}>
         <div className='d-flex mb-2'>
           <h3 className='page-title'>Identification Particulars Entry</h3>
           <Button variant='light' type='button'>
@@ -79,7 +90,7 @@ export default function IdentifyParticulateEntry() {
                   <br />
                   <Controller
                     name='operationalStatus'
-                    control={control}
+                    control={methods.control}
                     render={({ field }) => (
                       <>
                         <Form.Check
@@ -111,9 +122,9 @@ export default function IdentifyParticulateEntry() {
                       </>
                     )}
                   />
-                  {errors.operationalStatus && (
+                  {methods.formState.errors.operationalStatus && (
                     <p className='text-danger'>
-                      {errors.operationalStatus.message}
+                      {methods.formState.errors.operationalStatus.message}
                     </p>
                   )}
                 </Form.Group>
@@ -122,12 +133,16 @@ export default function IdentifyParticulateEntry() {
                     <Form.Label>Additional Information</Form.Label>
                     <Controller
                       name='additionalInfo'
-                      control={control}
+                      control={methods.control}
                       render={({ field }) => (
                         <Form.Select
                           {...field}
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                            setWhyNotOperational(e.target.value);
+                          }}
                           aria-label='Additional Information'
-                          isInvalid={!!errors.additionalInfo}
+                          isInvalid={!!methods.formState.errors.additionalInfo}
                         >
                           <option value='seasonal'>Seasonal operations</option>
                           <option value='ceased'>Ceased operations</option>
@@ -138,12 +153,15 @@ export default function IdentifyParticulateEntry() {
                         </Form.Select>
                       )}
                     />
-                    {errors.additionalInfo && (
+                    {methods.formState.errors.additionalInfo && (
                       <p className='text-danger'>
-                        {errors.additionalInfo.message}
+                        {methods.formState.errors.additionalInfo.message}
                       </p>
                     )}
                   </Form.Group>
+                )}
+                {whyNotOperational === 'seasonal' && (
+                  <SeasonalOperationDetails />
                 )}
               </Row>
             </Card.Text>
@@ -156,6 +174,6 @@ export default function IdentifyParticulateEntry() {
           </Button>
         </div>
       </Form>
-    </>
+    </FormProvider>
   );
 }
