@@ -3,9 +3,11 @@ import SideBar from '../sidebar/Sidebar';
 
 export default function Layout(props) {
   return (
-    <div>
+    <div className='container-fluid d-flex'>
       <SideBar />
-      {props.children}
+      <div className="SiteContent">
+         {props.children}
+      </div>
     </div>
   );
 }
