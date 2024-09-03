@@ -1,6 +1,7 @@
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useNavigate } from 'react-router-dom';
+import Nav from 'react-bootstrap/Nav';
 function SideBar() {
   const navigate = useNavigate();
   const UserMenu = (
@@ -29,72 +30,56 @@ function SideBar() {
             alt='Logo'
           />
         </div>
-        <a href='#' className='mobile-menu'><i class="bi bi-list"></i></a>
+        <a href='#' className='mobile-menu'><i className="bi bi-list"></i></a>
       </div>
-      <ul className='nav nav-pills siteNav my-auto'>
-        <li
+      <Nav className='nav nav-pills siteNav my-auto' as="ul">
+        <Nav.Item as="li"
           className='nav-item'
           onClick={() => navigate('/nsso-secured/identify-particulate-1')}
         >
-          <a
-            href='javascript:void(0)'
-            className='nav-link d-flex'
-            aria-current='page'
-          >
-            <i className='bi bi-check-circle-fill text-success me-2' />
-            <span>Identification Particulars 1</span>
-          </a>
-        </li>
-        <li
+          <Nav.Link  className='nav-link d-flex'> <i className='bi bi-check-circle-fill text-success me-2' />
+            <span>Identification Particulars 1</span></Nav.Link>
+          
+        </Nav.Item>
+        <Nav.Item as="li"
           className='nav-item'
           onClick={() => navigate('/nsso-secured/identify-particulate-2')}
         >
-          <a
-            href='javascript:void(0)'
-            className='nav-link active d-flex'
-            aria-current='page'
-          >
+           <Nav.Link  className='nav-link d-flex'>
             <i className='bi bi-question-circle-fill me-2' />
             <span>Identification Particulars 2</span>
-          </a>
-        </li>
-        <li
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item as="li"
           className='nav-item' 
           onClick={() => navigate('/nsso-secured/capital-expenditure-outlook')}
         >
-          <a href='javascript:void(0)' className='nav-link link-body-emphasis d-flex'>
+          <Nav.Link  className='nav-link d-flex'>
             <i className='bi bi-question-circle-fill me-2' />
             <span>Capital Expenditure (CAPEX) Outlook</span>
-          </a>
-        </li>
-        <li
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item as="li"
           className='nav-item'
           onClick={() => navigate('/nsso-secured/capital-expenditure-intention')}
         >
-          <a href='javascript:void(0)' className='nav-link link-body-emphasis d-flex'>
+           <Nav.Link  className='nav-link d-flex'>
             <i className='bi bi-question-circle-fill me-2' />
             <span>Capital Expenditure (CAPEX) Intention</span>
-          </a>
-        </li>
-        <li
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item as="li"
           className='nav-item'
           onClick={() => navigate('/nsso-secured/investment-activity-outlook')}
         >
-          <a href='javascript:void(0)' className='nav-link link-body-emphasis d-flex'>
+          <Nav.Link  className='nav-link d-flex'>
             <i className='bi bi-question-circle-fill me-2' />
             <span>Investment Activity Outlook</span>
-          </a>
-        </li>
-        <li
-          className='nav-item'
-          onClick={() => navigate('/nsso-secured/investment-activity-strategy')}
-        >
-          <a href='javascript:void(0)' className='nav-link link-body-emphasis d-flex'>
-            <i className='bi bi-question-circle-fill me-2' />
-            <span>Investment Activity Strategy</span>
-          </a>
-        </li>
-      </ul>
+
+          </Nav.Link>
+        </Nav.Item>
+      </Nav>
+
 
       <NavDropdown
         id='nav-dropdown-dark-example'
