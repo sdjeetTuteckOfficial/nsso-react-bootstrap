@@ -1,104 +1,87 @@
-import { useForm, Controller } from 'react-hook-form';
+import { useState, useEffect } from 'react';
+import { useForm, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { Container, Form, Button, Row, Col } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
+import { validationSchema } from './validationSchema';
+import PrimaryDetailsForm from './PrimaryDetailsForm';
+import SecondaryDetailsForm from './SecondaryDetailsForm';
 
-const schema = yup.object().shape({
-  name: yup.string().required('Name is required'),
-  email: yup
-    .string()
-    .email('Invalid email format')
-    .required('Email is required'),
-  password: yup
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .required('Password is required'),
-});
+const ParentForm = () => {
+  const [softWarnings, setSoftWarnings] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
-function Test() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    resolver: yupResolver(schema),
+  const methods = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      age: '',
+      education: '', // Add other default values as needed
+    },
   });
 
+  const {
+    handleSubmit,
+    formState: { errors },
+    getValues,
+  } = methods;
+
+  useEffect(() => {
+    const warnings = Object.values(errors).filter(
+      (error) => error.type === 'soft-check'
+    );
+
+    if (Object.keys(errors).length > 0 && warnings.length > 0) {
+      setSoftWarnings(warnings.map((warning) => warning.message));
+      setShowModal(true);
+    }
+  }, [errors]);
+
   const onSubmit = (data) => {
-    console.log(data);
+    console.log('Form submitted successfully:', data);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleModalSubmit = async () => {
+    const data = getValues();
+    setShowModal(false);
+    console.log('Form data on Submit Anyway:', data);
   };
 
   return (
-    <Container className='mt-4'>
-      <Row>
-        <Col md={6} lg={4} className='mx-auto'>
-          <h1 className='mb-4'>Registration Form</h1>
-          <Form noValidate onSubmit={handleSubmit(onSubmit)}>
-            <Form.Group controlId='formName'>
-              <Form.Label>Name</Form.Label>
-              <Controller
-                name='name'
-                control={control}
-                render={({ field }) => (
-                  <Form.Control
-                    type='text'
-                    placeholder='Enter your name'
-                    isInvalid={!!errors.name}
-                    {...field}
-                  />
-                )}
-              />
-              <Form.Control.Feedback type='invalid'>
-                {errors.name?.message}
-              </Form.Control.Feedback>
-            </Form.Group>
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <PrimaryDetailsForm />
+        <SecondaryDetailsForm />
 
-            <Form.Group controlId='formEmail'>
-              <Form.Label>Email</Form.Label>
-              <Controller
-                name='email'
-                control={control}
-                render={({ field }) => (
-                  <Form.Control
-                    type='email'
-                    placeholder='Enter your email'
-                    isInvalid={!!errors.email}
-                    {...field}
-                  />
-                )}
-              />
-              <Form.Control.Feedback type='invalid'>
-                {errors.email?.message}
-              </Form.Control.Feedback>
-            </Form.Group>
+        <Button variant='primary' type='submit'>
+          Submit
+        </Button>
+      </form>
 
-            <Form.Group controlId='formPassword'>
-              <Form.Label>Password</Form.Label>
-              <Controller
-                name='password'
-                control={control}
-                render={({ field }) => (
-                  <Form.Control
-                    type='password'
-                    placeholder='Password'
-                    isInvalid={!!errors.password}
-                    {...field}
-                  />
-                )}
-              />
-              <Form.Control.Feedback type='invalid'>
-                {errors.password?.message}
-              </Form.Control.Feedback>
-            </Form.Group>
-
-            <Button variant='primary' type='submit' disabled={isSubmitting}>
-              Submit
-            </Button>
-          </Form>
-        </Col>
-      </Row>
-    </Container>
+      <Modal show={showModal} onHide={handleModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Warning</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {softWarnings.map((warning, index) => (
+            <p key={index}>{warning}</p>
+          ))}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='secondary' onClick={handleModalClose}>
+            Cancel
+          </Button>
+          <Button variant='primary' onClick={handleModalSubmit}>
+            Submit Anyway
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </FormProvider>
   );
-}
+};
 
-export default Test;
+export default ParentForm;
