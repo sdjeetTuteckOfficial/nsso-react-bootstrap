@@ -13,6 +13,7 @@ import IdentifyParticulateTwo from '../pages/identify-particulate/IdentifyPartic
 import CapitalExpenditureIntention from '../pages/capital-expenditure-intention/CapitalExpenditureIntention';
 import CapitalExpenditureOutlook from '../pages/capital-expenditure-outlook/CapitalExpenditureOutlook';
 import InvestmentActivityOutlook from '../pages/investment-activity-outlook/InvestmentActivityOutlook';
+import IdentifyParticulateEntry from '../pages/indentify-particulate-final/IdentifyParticulateEntry';
 
 function PublicRoutes() {
   const router = createBrowserRouter([
@@ -34,11 +35,23 @@ function PublicRoutes() {
       errorElement: <PageNotFound />,
       children: [
         { path: 'test', element: <Test /> },
-        { path: 'identify-particulate-1', element: <IdentifyParticulateOne /> },
+        {
+          path: 'identify-particulate-1',
+          element: <IdentifyParticulateEntry />,
+        },
         { path: 'identify-particulate-2', element: <IdentifyParticulateTwo /> },
-        { path: 'capital-expenditure-outlook', element: <CapitalExpenditureOutlook /> },
-        { path: 'capital-expenditure-intention', element: <CapitalExpenditureIntention /> },
-        { path: 'investment-activity-outlook', element: <InvestmentActivityOutlook /> },
+        {
+          path: 'capital-expenditure-outlook',
+          element: <CapitalExpenditureOutlook />,
+        },
+        {
+          path: 'capital-expenditure-intention',
+          element: <CapitalExpenditureIntention />,
+        },
+        {
+          path: 'investment-activity-outlook',
+          element: <InvestmentActivityOutlook />,
+        },
       ],
     },
   ]);
