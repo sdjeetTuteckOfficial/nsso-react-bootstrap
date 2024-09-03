@@ -58,20 +58,29 @@ function SideBar() {
             <span>Identification Particulars 2</span>
           </a>
         </li>
-        <li className='nav-item'>
-          <a href='#' className='nav-link link-body-emphasis d-flex'>
+        <li
+          className='nav-item' 
+          onClick={() => navigate('/nsso-secured/capital-expenditure-outlook')}
+        >
+          <a href='javascript:void(0)' className='nav-link link-body-emphasis d-flex'>
             <i className='bi bi-question-circle-fill me-2' />
             <span>Capital Expenditure (CAPEX) Outlook</span>
           </a>
         </li>
-        <li className='nav-item'>
-          <a href='#' className='nav-link link-body-emphasis d-flex'>
+        <li
+          className='nav-item'
+          onClick={() => navigate('/nsso-secured/capital-expenditure-intention')}
+        >
+          <a href='javascript:void(0)' className='nav-link link-body-emphasis d-flex'>
             <i className='bi bi-question-circle-fill me-2' />
             <span>Capital Expenditure (CAPEX) Intention</span>
           </a>
         </li>
-        <li className='nav-item'>
-          <a href='#' className='nav-link link-body-emphasis d-flex'>
+        <li
+          className='nav-item'
+          onClick={() => navigate('/nsso-secured/investment-activity-outlook')}
+        >
+          <a href='javascript:void(0)' className='nav-link link-body-emphasis d-flex'>
             <i className='bi bi-question-circle-fill me-2' />
             <span>Investment Activity Outlook</span>
           </a>
