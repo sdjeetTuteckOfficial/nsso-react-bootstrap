@@ -8,7 +8,11 @@ import { Button, Dropdown } from "react-bootstrap";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { requiredValidator } from "../../components/validator/CommonValidator";
+import {
+  requiredValidator,
+  requiredValidatorOfArrayNew,
+} from "../../components/validator/CommonValidator";
+import Select from "react-select";
 
 export default function InvestmentActivityStrategy() {
   const [preferredInvestmentOthers, setPreferredInvestmentOthers] =
@@ -71,7 +75,7 @@ export default function InvestmentActivityStrategy() {
       objectiveOfInvestment: requiredValidator(
         "Objective of investment in the current FY"
       ),
-      preferredStates: requiredValidator(
+      preferredStates: requiredValidatorOfArrayNew(
         "Most preferred States for investment in the country in the current FY"
       ),
     });
@@ -108,6 +112,8 @@ export default function InvestmentActivityStrategy() {
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  console.log("error object", errors);
 
   const onSubmit = (data) => {
     console.log(data);
@@ -252,23 +258,16 @@ export default function InvestmentActivityStrategy() {
                   <Controller
                     name="preferredStates"
                     control={control}
-                    defaultValue=""
+                    defaultValue={[]}
                     render={({ field }) => (
-                      <Form.Select
-                        aria-label="Default select example"
-                        {...field}
-                        isInvalid={!!errors.preferredStates}
-                      >
-                        <option value="">Open this select menu</option>
-                        {statesAndUTs.map((state) => (
-                          <option value={state.value}> {state.label}</option>
-                        ))}
-                      </Form.Select>
+                      <Select options={statesAndUTs} isMulti {...field} />
                     )}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.preferredStates?.message}
-                  </Form.Control.Feedback>
+                  {errors.preferredStates && (
+                    <p className="text-danger">
+                      {errors.preferredStates.message}
+                    </p>
+                  )}
                 </Form.Group>
               </Row>
             </Card.Text>
