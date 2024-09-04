@@ -5,11 +5,116 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import {
+  requiredValidator,
+  requiredNonZeroPositiveValidator,
+} from "../../components/validator/CommonValidator";
+const tableField = [
+  "101",
+  "102",
+  "103",
+  "104",
+  "105",
+  "106",
+  "107",
+  "108",
+  "109",
+  "110",
+  "111",
+  "112",
+  "113",
+  "114",
+  "115",
+  "116",
+  "117",
+];
+
+const capitalExpenditureColumns = [
+  ["A013", "A014", "A015", "A016"],
+  ["A023", "A024", "A025", "A026"],
+  ["A033", "A034", "A035", "A036"],
+  ["A043", "A044", "A045", "A046"],
+  ["A053", "A054", "A055", "A056"],
+  ["A063", "A064", "A065", "A066"],
+  ["A073", "A074", "A075", "A076"],
+  ["A083", "A084", "A085", "A086"],
+];
+
+const operationalColumns = [
+  ["F013", "F014", "F015"],
+  ["F023", "F024", "F025"],
+  ["F033", "F034", "F035"],
+];
 
 const CapitalExpenditureOutlook = () => {
+  const schemaBuilder = () => {
+    const baseSchema = yup.object().shape({
+      operationalStatus: requiredValidator(
+        "Whether the enterprise was operational before the financial year 2021-22"
+      ),
+    });
+
+    let conditionalSchema = baseSchema; // Initialize with the base schema
+
+    tableField.forEach((alertOption) => {
+      conditionalSchema = conditionalSchema.shape({
+        [`A${alertOption}`]: requiredNonZeroPositiveValidator("field"), // Use computed property name
+      });
+    });
+
+    operationalColumns.forEach((row) => {
+      row.forEach((field) => {
+        conditionalSchema = conditionalSchema.shape({
+          [field]: requiredNonZeroPositiveValidator("field"), // Use computed property name
+        });
+      });
+    });
+
+    capitalExpenditureColumns.forEach((row) => {
+      row.forEach((field) => {
+        if (
+          field !== "A014" &&
+          field !== "A044" &&
+          field !== "A054" &&
+          field !== "A055" &&
+          field !== "A064" &&
+          field !== "A065" &&
+          field !== "A074" &&
+          field !== "A084"
+        ) {
+          conditionalSchema = conditionalSchema.shape({
+            [field]: requiredNonZeroPositiveValidator("field"), // Use computed property name
+          });
+        }
+      });
+    });
+
+    return conditionalSchema;
+  };
+
+  const schema = schemaBuilder();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  console.log("Schema", schema.fields, errors);
+
+  const onSubmit = (data) => {
+    console.log("form submited...", data);
+    // navigate("/nsso-secured/test"); // Uncomment if using navigation
+  };
+
   return (
     <div>
-      <Form className="siteForm">
+      <Form className="siteForm" noValidate onSubmit={handleSubmit(onSubmit)}>
         <div className="d-flex mb-2">
           <h3 className="page-title">Capital Expenditure (CAPEX) Outlook:</h3>
           <Button variant="light">
@@ -18,34 +123,53 @@ const CapitalExpenditureOutlook = () => {
         </div>
         <Card className="questionCard mb-3">
           <Card.Body>
-            <Card.Title>
-              <span className="Count">8</span>{" "}
-              <h5>
-                Whether the enterprise was operational before the financial year
-                2021-22
-              </h5>
-            </Card.Title>
             <Row>
-              {["radio"].map((type) => (
-                <div key={`inline-${type}`} className="mt-3">
-                  <Form.Check
-                    inline
-                    label="Yes"
-                    name="group8"
-                    type={type}
-                    id={`inline-${type}-1`}
-                    className="mb-3"
-                  />
-                  <Form.Check
-                    inline
-                    label="No"
-                    name="group8"
-                    type={type}
-                    id={`inline-${type}-2`}
-                    className="mb-3"
-                  />
-                </div>
-              ))}
+              <Form.Group as={Col} lg="12" md="12" sm="12">
+                <Form.Label>
+                  <h5>
+                    Whether the enterprise was operational before the financial
+                    year 2021-22
+                  </h5>
+                </Form.Label>
+                <br />
+                <Controller
+                  name="operationalStatus"
+                  control={control}
+                  render={({ field: { onChange, value, ref, onBlur } }) => (
+                    <>
+                      <Form.Check
+                        inline
+                        label="Yes"
+                        type="radio"
+                        value="yes"
+                        id="operational"
+                        onChange={onChange}
+                        checked={value === "yes"}
+                        onBlur={onBlur}
+                        ref={ref}
+                        className="me-3"
+                      />
+                      <Form.Check
+                        inline
+                        label="No"
+                        type="radio"
+                        value="no"
+                        id="not-operational"
+                        onChange={onChange}
+                        checked={value === "no"}
+                        onBlur={onBlur}
+                        ref={ref}
+                        className="me-3"
+                      />
+                    </>
+                  )}
+                />
+                {errors.operationalStatus && (
+                  <p className="text-danger">
+                    {errors.operationalStatus.message}
+                  </p>
+                )}
+              </Form.Group>
             </Row>
             <Row>
               <Col lg={12} sm={12} md={12}>
@@ -84,39 +208,183 @@ const CapitalExpenditureOutlook = () => {
                       <td>2021-22</td>
                       <td>F01</td>
                       <td>
-                        <Form.Control type="text" />
+                        <Form.Group controlId="formEmail">
+                          <Controller
+                            name="F013"
+                            control={control}
+                            defaultValue={0}
+                            render={({ field }) => (
+                              <Form.Control
+                                type="text"
+                                isInvalid={!!errors.F013}
+                                {...field}
+                              />
+                            )}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.F013?.message}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </td>
                       <td>
-                        <Form.Control type="text" />
+                        <Form.Group controlId="formEmail">
+                          <Controller
+                            name="F014"
+                            control={control}
+                            defaultValue={0}
+                            render={({ field }) => (
+                              <Form.Control
+                                type="text"
+                                isInvalid={!!errors.F014}
+                                {...field}
+                              />
+                            )}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.F014?.message}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </td>
                       <td>
-                        <Form.Control type="text" />
+                        <Form.Group controlId="formEmail">
+                          <Controller
+                            name="F015"
+                            control={control}
+                            defaultValue={0}
+                            render={({ field }) => (
+                              <Form.Control
+                                type="text"
+                                isInvalid={!!errors.F015}
+                                {...field}
+                              />
+                            )}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.F015?.message}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </td>
                     </tr>
                     <tr>
                       <td>2022-23</td>
                       <td>F02</td>
                       <td>
-                        <Form.Control type="text" />
+                        <Form.Group controlId="formEmail">
+                          <Controller
+                            name="F023"
+                            control={control}
+                            defaultValue={0}
+                            render={({ field }) => (
+                              <Form.Control
+                                type="text"
+                                isInvalid={!!errors.F023}
+                                {...field}
+                              />
+                            )}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.F023?.message}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </td>
                       <td>
-                        <Form.Control type="text" />
+                        <Form.Group controlId="formEmail">
+                          <Controller
+                            name="F024"
+                            control={control}
+                            defaultValue={0}
+                            render={({ field }) => (
+                              <Form.Control
+                                type="text"
+                                isInvalid={!!errors.F024}
+                                {...field}
+                              />
+                            )}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.F024?.message}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </td>
                       <td>
-                        <Form.Control type="text" />
+                        <Form.Group controlId="formEmail">
+                          <Controller
+                            name="F025"
+                            control={control}
+                            defaultValue={0}
+                            render={({ field }) => (
+                              <Form.Control
+                                type="text"
+                                isInvalid={!!errors.F025}
+                                {...field}
+                              />
+                            )}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.F025?.message}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </td>
                     </tr>
                     <tr>
                       <td>2023-24</td>
                       <td>F03</td>
                       <td>
-                        <Form.Control type="text" />
+                        <Form.Group controlId="formEmail">
+                          <Controller
+                            name="F033"
+                            control={control}
+                            defaultValue={0}
+                            render={({ field }) => (
+                              <Form.Control
+                                type="text"
+                                isInvalid={!!errors.F033}
+                                {...field}
+                              />
+                            )}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.F033?.message}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </td>
                       <td>
-                        <Form.Control type="text" />
+                        <Form.Group controlId="formEmail">
+                          <Controller
+                            name="F034"
+                            control={control}
+                            defaultValue={0}
+                            render={({ field }) => (
+                              <Form.Control
+                                type="text"
+                                isInvalid={!!errors.F034}
+                                {...field}
+                              />
+                            )}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.F034?.message}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </td>
                       <td>
-                        <Form.Control type="text" />
+                        <Form.Group controlId="formEmail">
+                          <Controller
+                            name="F035"
+                            control={control}
+                            defaultValue={0}
+                            render={({ field }) => (
+                              <Form.Control
+                                type="text"
+                                isInvalid={!!errors.F035}
+                                {...field}
+                              />
+                            )}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.F035?.message}
+                          </Form.Control.Feedback>
+                        </Form.Group>
                       </td>
                     </tr>
                   </tbody>
@@ -136,6 +404,10 @@ const CapitalExpenditureOutlook = () => {
               </h5>
             </Card.Title>
             <Row>
+              <p className="fs-6 text-success">
+                (Note: Please report financial Information in thousand (000) of
+                Indian Rupees)
+              </p>
               <Table
                 bordered
                 hover
@@ -181,14 +453,62 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>A01</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A013"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A013}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A013?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A015"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A015}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A015?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A016"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A016}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A016?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                   </tr>
@@ -198,16 +518,80 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>A02</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A023"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A023}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A023?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A024"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A024}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A024?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A025"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A025}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A025?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A026"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A026}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A026?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                   </tr>
@@ -217,16 +601,80 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>A03</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A033"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A033}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A033?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A034"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A034}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A034?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A035"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A035}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A035?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A036"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A036}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A036?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                   </tr>
@@ -234,14 +682,62 @@ const CapitalExpenditureOutlook = () => {
                     <td style={{ textWrap: "nowrap" }}>Land</td>
                     <td>A04</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A043"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A043}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A043?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A045"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A045}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A045?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A046"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A046}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A046?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                   </tr>
@@ -251,12 +747,44 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>A05</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A053"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A053}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A053?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A056"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A056}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A056?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                   </tr>
@@ -266,12 +794,44 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>A06</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A063"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A063}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A063?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A066"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A066}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A066?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                   </tr>
@@ -281,14 +841,62 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>A07</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A073"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A073}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A073?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A075"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A075}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A075?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A076"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A076}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A076?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                   </tr>
@@ -298,14 +906,62 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>A08</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A083"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A083}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A083?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A085"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A085}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A085?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A086"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A086}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A086?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                   </tr>
@@ -362,21 +1018,69 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>101</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A101"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A101}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A101?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>Mining And Quarrying</td>
                     <td>102</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A102"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A102}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A102?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>Manufaturing</td>
                     <td>103</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A103"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A103}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A103?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -385,7 +1089,23 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>104</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A104"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A104}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A104?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -395,14 +1115,46 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>105</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A105"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A105}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A105?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>Construction</td>
                     <td>106</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A106"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A106}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A106?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -412,7 +1164,23 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>107</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A107"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A107}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A107?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -421,7 +1189,23 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>108</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A108"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A108}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A108?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -430,7 +1214,23 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>109</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A109"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A109}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A109?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -439,7 +1239,23 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>110</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A110"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A110}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A110?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -448,7 +1264,23 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>111</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A111"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A111}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A111?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -457,7 +1289,23 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>112</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A112"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A112}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A112?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -466,7 +1314,23 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>113</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A113"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A113}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A113?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -476,14 +1340,46 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>114</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A114"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A114}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A114?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>Education</td>
                     <td>115</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A115"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A115}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A115?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -492,7 +1388,23 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>116</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A116"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A116}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A116?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -502,7 +1414,23 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>117</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A117"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A117}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A117?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr style={{ textAlign: "center" }}>
@@ -516,7 +1444,7 @@ const CapitalExpenditureOutlook = () => {
         </Card>
         <div className="footerBtnGroup d-flex justify-content-end">
           <div>
-            <Button variant="primary" className="ms-2">
+            <Button variant="primary" type="submit" className="ms-2">
               Save & Continue <i class="bi bi-arrow-right-short"></i>
             </Button>
           </div>
