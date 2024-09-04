@@ -1,105 +1,247 @@
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
+import { useState } from 'react';
+import { useForm, FormProvider, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
+import { Row, Col, Card } from 'react-bootstrap';
+import BasicInformationCard from './basic-information/BasicInformationCard';
+import { enterpriseData, contactInfoData } from './demo-data/data';
+import SeasonalOperationDetails from './operations-form/seasonal-details-form/SeasonalDetailsForm';
+import CeasedOperationDetails from './operations-form/ceased-operation-form/CeasedOperationsForm';
+import SoldOperationsForm from './operations-form/sold-operations/SoldOperations';
+import TemporarilyInactiveForm from './operations-form/temporarily-inactive-form/TemporarilyInactiveForm';
+import NoLongerOperatingForm from './operations-form/no-longer-operating-form/NoLongerOperatingForm';
+import AmalgamatedForm from './operations-form/amalgamated-form/AmalgamatedForm';
+import PrincipalActivityQuestion from './operations-form/question-five-form/PrincipalActivityQuestion';
+import TurnoverPercentageQuestion from './operations-form/turnover-percentage-form/TurnoverPercentageForm';
+
+const schema = yup.object().shape({
+  operationalStatus: yup.string().required('Operational status is required'),
+  additionalInfo: yup.string().when('operationalStatus', {
+    is: (val) => val === 'non-operational',
+    then: () =>
+      yup.string().required('Additional info is required when not operational'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  closeDate: yup
+    .date()
+    .nullable()
+    .transform((value, originalValue) =>
+      originalValue === '' ? null : new Date(originalValue)
+    )
+    .when('additionalInfo', {
+      is: (val) => val === 'seasonal',
+      then: () => yup.date().nullable().required('Close date is required'),
+      otherwise: () => yup.date().nullable().notRequired(),
+    }),
+  resumeDate: yup
+    .date()
+    .nullable()
+    .transform((value, originalValue) =>
+      originalValue === '' ? null : new Date(originalValue)
+    )
+    .when('additionalInfo', {
+      is: (val) => val === 'seasonal',
+      then: () => yup.date().nullable().required('Resume date is required'),
+      otherwise: () => yup.date().nullable().notRequired(),
+    }),
+  ceaseDate: yup
+    .date()
+    .nullable()
+    .when('additionalInfo', {
+      is: (val) => val === 'ceased',
+      then: () => yup.date().required('Cease date is required'),
+      otherwise: () => yup.date().notRequired(),
+    }),
+  ceaseReason: yup.string().when('additionalInfo', {
+    is: (val) => val === 'ceased',
+    then: () => yup.string().required('Cease reason is required'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  ceaseComment: yup.string().when('additionalInfo', {
+    is: (val) => val === 'ceased',
+    then: () =>
+      yup
+        .string()
+        .max(250, 'Comment must be at most 250 characters')
+        .notRequired(),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  soldDate: yup
+    .date()
+    .nullable()
+    .when('additionalInfo', {
+      is: (val) => val === 'sold',
+      then: () => yup.date().required('Cease date is required'),
+      otherwise: () => yup.date().notRequired(),
+    }),
+  buyerCIN: yup.string().when('additionalInfo', {
+    is: (val) => val === 'sold',
+    then: () => yup.string().required('Buyer CIN is required'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  buyerLegalName: yup.string().when('additionalInfo', {
+    is: (val) => val === 'sold',
+    then: () => yup.string().required('Buyer legal name is required'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  inactiveDate: yup
+    .date()
+    .nullable()
+    .when('additionalInfo', {
+      is: (val) => val === 'inactive',
+      then: () =>
+        yup.date().required('Date of temporary inactivity is required'),
+      otherwise: () => yup.date().notRequired(),
+    }),
+  resumeDateTemp: yup
+    .date()
+    .nullable()
+    .when('additionalInfo', {
+      is: (val) => val === 'inactive',
+      then: () => yup.date().required('Expected resume date is required'),
+      otherwise: () => yup.date().notRequired(),
+    }),
+  inactiveReason: yup.string().when('additionalInfo', {
+    is: (val) => val === 'inactive',
+    then: () =>
+      yup
+        .string()
+        .max(250, 'Comment must be at most 250 characters')
+        .notRequired(),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  stopDate: yup
+    .date()
+    .nullable()
+    .when('additionalInfo', {
+      is: (val) => val === 'other',
+      then: () =>
+        yup.date().required('Date of stopping operations is required'),
+      otherwise: () => yup.date().notRequired(),
+    }),
+  stopReason: yup.string().when('additionalInfo', {
+    is: (val) => val === 'other',
+    then: () =>
+      yup.string().required('Reason for stopping operations is required'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  amalgamateDate: yup
+    .date()
+    .nullable()
+    .when('additionalInfo', {
+      is: (val) => val === 'amalgamated',
+      then: () => yup.date().required('Amalgamation date is required'),
+      otherwise: () => yup.date().notRequired(),
+    }),
+  resultingCIN: yup.string().when('additionalInfo', {
+    is: (val) => val === 'amalgamated',
+    then: () =>
+      yup.string().required('CIN of the resulting enterprise is required'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  resultingLegalName: yup.string().when('additionalInfo', {
+    is: (val) => val === 'amalgamated',
+    then: () =>
+      yup
+        .string()
+        .required('Legal name of the resulting enterprise is required'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  principalActivity: yup.string().when('operationalStatus', {
+    is: (val) => val === 'operational',
+    then: () => yup.string().required('This is required field'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  otherActivity: yup.string().when('principalActivity', {
+    is: (val) => val === '118',
+    then: () => yup.string().required('Please specify the activity'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  turnoverPercentage: yup.number().when('operationalStatus', {
+    is: (val) => val === 'operational',
+    then: () =>
+      yup
+        .number()
+        .required('Percentage is required')
+        .min(0, 'Percentage must be at least 0')
+        .max(100, 'Percentage must be at most 100'),
+    otherwise: () => yup.number().notRequired(),
+  }),
+});
 
 export default function IdentifyParticulateEntry() {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [whyNotOperational, setWhyNotOperational] = useState('');
+
+  const methods = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      operationalStatus: '',
+      additionalInfo: '',
+      closeDate: null,
+      resumeDate: null,
+      ceaseDate: null,
+      ceaseReason: '',
+      ceaseComment: '',
+      soldDate: null,
+      buyerCIN: '',
+      buyerLegalName: '',
+      inactiveDate: null,
+      resumeDateTemp: null,
+      inactiveReason: '',
+      stopDate: null,
+      stopReason: '',
+      principalActivity: '',
+      otherActivity: '',
+      turnoverPercentage: null,
+    },
+  });
+
+  const {
+    setValue,
+    formState: { errors },
+  } = methods;
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
+  const handleStatusChange = (value) => {
+    if (value === 'operational') {
+      //do setValues
+      setWhyNotOperational('');
+      setValue('closeDate', null);
+      setValue('resumeDate', null);
+      setValue('additionalInfo', '');
+      setValue('ceaseDate', null);
+      setValue('ceaseComment', '');
+      setValue('ceaseReason', '');
+    }
+    setShowDropdown(value === 'non-operational');
+  };
+
   return (
-    <>
-      <Form className='siteForm'>
+    <FormProvider {...methods}>
+      {console.log('err', errors)}
+      <Form className='siteForm' onSubmit={methods.handleSubmit(onSubmit)}>
         <div className='d-flex mb-2'>
           <h3 className='page-title'>Identification Particulars Entry</h3>
-          <Button variant='light'>
+          <Button variant='light' type='button'>
             Save & Continue <i className='bi bi-arrow-right-short'></i>
           </Button>
         </div>
-        <Card className='questionCard mb-3'>
-          <Card.Body>
-            <Card.Title>
-              <span className='Count'>1</span>{' '}
-              <h5>Provide the Identification particulars of the enterprise.</h5>
-            </Card.Title>
-            <Card.Text>
-              <Row>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>Corporate Identification Number (CIN)</Form.Label>
-                  <p>AZS78541345</p>
-                </Form.Group>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>Legal name of the enterprise</Form.Label>
-                  <p>Example Enterprise</p>
-                </Form.Group>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>Operating name of the enterprise</Form.Label>
-                  <p>Operating name</p>
-                </Form.Group>
-                <Form.Group as={Col} lg='12' md='12' sm='12'>
-                  <Form.Label>Company Address of the enterprise</Form.Label>
-                  <p>
-                    142 Netaji Subhash Road, Panihati, Kolkata, Pin code -
-                    700114, West Bengal, India
-                  </p>
-                </Form.Group>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>Company Email ID</Form.Label>
-                  <p>example@gmail.com</p>
-                </Form.Group>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>GSTN of the enterprise</Form.Label>
-                  <p>GSTNO87764346</p>
-                </Form.Group>
-              </Row>
-            </Card.Text>
-          </Card.Body>
-        </Card>
-        <Card className='questionCard mb-3'>
-          <Card.Body>
-            <Card.Title>
-              <span className='Count'>2</span>{' '}
-              <h5>
-                Provide the contact information of the designated enterprise
-                contact person for this questionnaire
-              </h5>
-            </Card.Title>
-            <Card.Text>
-              <Row>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>First Name</Form.Label>
-                  <p>Abhishek</p>
-                </Form.Group>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>Last Name</Form.Label>
-                  <p>Ghosh</p>
-                </Form.Group>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>Designation</Form.Label>
-                  <p>UI UX Laead</p>
-                </Form.Group>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>Email ID</Form.Label>
-                  <p>example@gmail.com</p>
-                </Form.Group>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>Mobile Mo</Form.Label>
-                  <p>8296855114</p>
-                </Form.Group>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>TelePhone No</Form.Label>
-                  <p>033 8296855114</p>
-                </Form.Group>
-                <Form.Group as={Col} lg='12' md='12' sm='12'>
-                  <Form.Label>Postal Address</Form.Label>
-                  <p>
-                    142 Netaji Subhash Road, Panihati, Kolkata, Pin code -
-                    700114, West Bengal, India
-                  </p>
-                </Form.Group>
-              </Row>
-            </Card.Text>
-          </Card.Body>
-        </Card>
+        <BasicInformationCard
+          items={enterpriseData.items}
+          title={enterpriseData.title}
+          count={1}
+        />
+        <BasicInformationCard
+          items={contactInfoData.items}
+          title={contactInfoData.title}
+          count={2}
+        />
         <Card className='questionCard mb-3'>
           <Card.Body>
             <Card.Title>
@@ -111,73 +253,108 @@ export default function IdentifyParticulateEntry() {
             </Card.Title>
             <Card.Text>
               <Row>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>First name</Form.Label>
-                  <Form.Control
-                    required
-                    type='text'
-                    placeholder='First name'
-                    defaultValue='Mark'
-                    className='mb-3'
+                <Form.Group as={Col} lg='12' md='12' sm='12'>
+                  <Form.Label>Operational Status</Form.Label>
+                  <br />
+                  <Controller
+                    name='operationalStatus'
+                    control={methods.control}
+                    render={({ field }) => (
+                      <>
+                        <Form.Check
+                          inline
+                          label='Operational'
+                          type='radio'
+                          value='operational'
+                          id='operational'
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                            handleStatusChange(e.target.value);
+                          }}
+                          checked={field.value === 'operational'}
+                          className='me-3'
+                        />
+                        <Form.Check
+                          inline
+                          label='Not currently operational'
+                          type='radio'
+                          value='non-operational'
+                          id='not-operational'
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                            handleStatusChange(e.target.value);
+                          }}
+                          checked={field.value === 'non-operational'}
+                          className='me-3'
+                        />
+                      </>
+                    )}
                   />
-                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                  {methods.formState.errors.operationalStatus && (
+                    <p className='text-danger'>
+                      {methods.formState.errors.operationalStatus.message}
+                    </p>
+                  )}
                 </Form.Group>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>Last name</Form.Label>
-                  <Form.Control
-                    required
-                    type='text'
-                    placeholder='Last name'
-                    defaultValue='Mark'
-                    className='mb-3'
-                  />
-                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group as={Col} lg='4' md='6' sm='12'>
-                  <Form.Label>Phone No.</Form.Label>
-                  <InputGroup className='mb-3'>
-                    <InputGroup.Text id='basic-addon1'>+91</InputGroup.Text>
-                    <Form.Control
-                      placeholder='Phone No'
-                      aria-label='Phone No.'
-                      aria-describedby='basic-addon1'
+                {showDropdown && (
+                  <Form.Group as={Col} lg='12' md='12' sm='12'>
+                    <Form.Label>
+                      Why is this enterprise not currently operational?
+                    </Form.Label>
+                    <Controller
+                      name='additionalInfo'
+                      control={methods.control}
+                      render={({ field }) => (
+                        <Form.Select
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                            setWhyNotOperational(e.target.value);
+                          }}
+                          aria-label='Additional Information'
+                          isInvalid={!!methods.formState.errors.additionalInfo}
+                        >
+                          <option value='' disabled>
+                            Select an option
+                          </option>
+                          <option value='seasonal'>Seasonal operations</option>
+                          <option value='ceased'>Ceased operations</option>
+                          <option value='sold'>Sold operations</option>
+                          <option value='amalgamated'>Amalgamated</option>
+                          <option value='inactive'>Temporarily inactive</option>
+                          <option value='other'>Other</option>
+                        </Form.Select>
+                      )}
                     />
-                  </InputGroup>
-                </Form.Group>
-              </Row>
-              <Row>
-                {['radio'].map((type) => (
-                  <div key={`inline-${type}`} className='mb-3'>
-                    <Form.Check
-                      inline
-                      label='Operational'
-                      name='group1'
-                      type={type}
-                      id={`inline-${type}-1`}
-                      className='mb-3'
-                    />
-                    <Form.Check
-                      inline
-                      label='Not currently operational'
-                      name='group1'
-                      type={type}
-                      id={`inline-${type}-2`}
-                      className='mb-3'
-                    />
-                  </div>
-                ))}
+                    {methods.formState.errors.additionalInfo && (
+                      <p className='text-danger'>
+                        {methods.formState.errors.additionalInfo.message}
+                      </p>
+                    )}
+                  </Form.Group>
+                )}
+                {whyNotOperational === 'seasonal' && (
+                  <SeasonalOperationDetails />
+                )}
+                {whyNotOperational === 'ceased' && <CeasedOperationDetails />}
+                {whyNotOperational === 'sold' && <SoldOperationsForm />}
+                {whyNotOperational === 'amalgamated' && <AmalgamatedForm />}
+                {whyNotOperational === 'inactive' && (
+                  <TemporarilyInactiveForm />
+                )}
+                {whyNotOperational === 'other' && <NoLongerOperatingForm />}
               </Row>
             </Card.Text>
           </Card.Body>
         </Card>
+        <PrincipalActivityQuestion />
+        <TurnoverPercentageQuestion />
         <div className='footerBtnGroup d-flex justify-content-end'>
-          <div>
-            <Button variant='primary' className='ms-2'>
-              Save & Continue <i className='bi bi-arrow-right-short'></i>
-            </Button>
-          </div>
+          <Button variant='primary' className='ms-2' type='submit'>
+            Save & Continue <i className='bi bi-arrow-right-short'></i>
+          </Button>
         </div>
       </Form>
-    </>
+    </FormProvider>
   );
 }
