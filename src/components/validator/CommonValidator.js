@@ -343,10 +343,10 @@ export const requiredNonZeroPositiveValidator = (name) =>
     .positive(`${name} must be a positive number and cannot be zero`)
     .min(0, `${name} must be greater and equal to 0`)
     .test(
-    'valid-number-range',
-    `${name} must be greater and equal to 0 and less than or equal to 100`,
-    (value) => !isNaN(value)  && value <= 100  // Updated test function
-  );
+      'valid-number-range',
+      `${name} must be greater and equal to 0 and less than or equal to 100`,
+      (value) => !isNaN(value)  && value <= 100  // Updated test function
+    )
 
 export const requiredPositiveValidator = (name) =>
   yup
@@ -372,7 +372,11 @@ export const requiredValidatorOfArray = (name) =>
   });
 
 export const requiredValidatorOfArrayNew = (name) =>
-  yup.array().min(1, `${name} is required!`);
+  yup
+    .array()
+    .min(1, `${name} is required!`)
+    .max(5, `${name} should not have more than 5 items!`);
+
 
 export const kamNameValidator = yup.string().required('Name is required');
 

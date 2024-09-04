@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
@@ -32,6 +32,17 @@ const tableField = [
   "117",
 ];
 
+const capitalExpenditureColumns = [
+  ["A013", "A014", "A015", "A016"],
+  ["A023", "A024", "A025", "A026"],
+  ["A033", "A034", "A035", "A036"],
+  ["A043", "A044", "A045", "A046"],
+  ["A053", "A054", "A055", "A056"],
+  ["A063", "A064", "A065", "A066"],
+  ["A073", "A074", "A075", "A076"],
+  ["A083", "A084", "A085", "A086"],
+];
+
 const CapitalExpenditureIntention = () => {
   const schemaBuilder = () => {
     const baseSchema = yup.object().shape({
@@ -45,6 +56,26 @@ const CapitalExpenditureIntention = () => {
         [`a${alertOption}field`]: requiredNonZeroPositiveValidator("field"), // Use computed property name
       });
     });
+
+    capitalExpenditureColumns.forEach((row) => {
+      row.forEach((field) => {
+        if (
+          field !== "A014" &&
+          field !== "A044" &&
+          field !== "A054" &&
+          field !== "A055" &&
+          field !== "A064" &&
+          field !== "A065" &&
+          field !== "A074" &&
+          field !== "A084"
+        ) {
+          conditionalSchema = conditionalSchema.shape({
+            [field]: requiredNonZeroPositiveValidator("field"), // Use computed property name
+          });
+        }
+      });
+    });
+
     return conditionalSchema;
   };
 
@@ -53,15 +84,108 @@ const CapitalExpenditureIntention = () => {
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  console.log("Schema", schema.fields, errors);
+  // console.log("Schema", schema.fields, errors);
+
+  const val_A01 = watch(["A013", "A015"]);
+  const sumRow_A01 = () => {
+    return val_A01.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A02 = watch(["A023", "A024", "A025"]);
+  const sumRow_A02 = () => {
+    return val_A02.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A03 = watch(["A033", "A034", "A035"]);
+  const sumRow_A03 = () => {
+    return val_A03.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A04 = watch(["A043", "A045"]);
+  const sumRow_A04 = () => {
+    return val_A04.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A05 = watch(["A053"]);
+  const sumRow_A05 = () => {
+    return val_A05.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A06 = watch(["A063"]);
+  const sumRow_A06 = () => {
+    return val_A06.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A07 = watch(["A073", "A075"]);
+  const sumRow_A07 = () => {
+    return val_A07.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A08 = watch(["A083", "A085"]);
+  const sumRow_A08 = () => {
+    return val_A08.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+
+  const values = watch([
+    "a101field",
+    "a102field",
+    "a103field",
+    "a104field",
+    "a105field",
+    "a106field",
+    "a107field",
+    "a108field",
+    "a109field",
+    "a110field",
+    "a111field",
+    "a112field",
+    "a113field",
+    "a114field",
+    "a115field",
+    "a116field",
+    "a117field",
+  ]);
+  const sumRow = () => {
+    return values.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
 
   const onSubmit = (data) => {
-    console.log(data);
+    console.log("form submited...", data);
     // navigate("/nsso-secured/test"); // Uncomment if using navigation
   };
 
@@ -85,6 +209,10 @@ const CapitalExpenditureIntention = () => {
               </h5>
             </Card.Title>
             <Row>
+              <p className="fs-6 text-success">
+                (Note: Please report financial Information in thousand (000) of
+                Indian Rupees)
+              </p>
               <Table
                 bordered
                 hover
@@ -130,16 +258,66 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>A01</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A013"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A013}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A013?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A015"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A015}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A015?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A016"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A016}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A016?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A01()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -147,18 +325,84 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>A02</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A023"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A023}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A023?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A024"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A024}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A024?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A025"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A025}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A025?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A026"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A026}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A026?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A02()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -166,34 +410,148 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>A03</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A033"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A033}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A033?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A034"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A034}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A034?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A035"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A035}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A035?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A036"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A036}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A036?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A03()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>Land</td>
                     <td>A04</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A043"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A043}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A043?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A045"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A045}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A045?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A046"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A046}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A046?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}>
-                      <div></div>
+                      {sumRow_A04()}
                     </td>
                   </tr>
                   <tr>
@@ -202,14 +560,48 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>A05</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A053"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A053}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A053?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A056"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A056}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A056?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A05()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -217,14 +609,48 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>A06</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A063"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A063}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A063?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A066"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A066}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A066?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A06()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -232,16 +658,66 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>A07</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A073"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A073}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A073?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A075"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A075}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A075?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A076"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A076}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A076?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A07()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -249,16 +725,66 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>A08</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A083"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A083}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A083?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td style={{ backgroundColor: "#2471dd" }}></td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A085"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A085}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A085?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="A086"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.A086}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.A086?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A08()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -730,7 +1256,14 @@ const CapitalExpenditureIntention = () => {
                   </tr>
                   <tr style={{ textAlign: "center" }}>
                     <th colSpan={2}>Total</th>
-                    <th>100</th>
+                    <th>
+                      {sumRow()}
+                      {sumRow() > 100 && (
+                        <p className="text-danger">
+                          Value should not be more than 100
+                        </p>
+                      )}
+                    </th>
                   </tr>
                 </tbody>
               </Table>
