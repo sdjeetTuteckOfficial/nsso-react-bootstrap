@@ -18,15 +18,15 @@ const PrincipalActivityQuestion = () => {
             Provide the current Principal / Main activity of the enterprise
           </h5>
         </Card.Title>
-        <Form.Group as={Col} lg='12' md='12' sm='12'>
+        <Form.Group as={Col} lg='6' md='12' sm='12'>
           <Form.Label>Select the main activity</Form.Label>
           <Controller
             name='principalActivity'
             control={control}
             render={({ field }) => (
               <>
-                <Form.Control
-                  as='select'
+                <Form.Select
+                  //   as='select'
                   {...field}
                   isInvalid={!!errors.principalActivity}
                 >
@@ -75,7 +75,7 @@ const PrincipalActivityQuestion = () => {
                     n.e.c.
                   </option>
                   <option value='118'>Others</option>
-                </Form.Control>
+                </Form.Select>
                 <Form.Control.Feedback type='invalid'>
                   {errors.principalActivity?.message}
                 </Form.Control.Feedback>
@@ -94,6 +94,7 @@ const PrincipalActivityQuestion = () => {
                 <>
                   <Form.Control
                     type='text'
+                    as='textarea'
                     {...field}
                     isInvalid={!!errors.otherActivity}
                   />

@@ -14,6 +14,7 @@ import TemporarilyInactiveForm from './operations-form/temporarily-inactive-form
 import NoLongerOperatingForm from './operations-form/no-longer-operating-form/NoLongerOperatingForm';
 import AmalgamatedForm from './operations-form/amalgamated-form/AmalgamatedForm';
 import PrincipalActivityQuestion from './operations-form/question-five-form/PrincipalActivityQuestion';
+import TurnoverPercentageQuestion from './operations-form/turnover-percentage-form/TurnoverPercentageForm';
 
 const schema = yup.object().shape({
   operationalStatus: yup.string().required('Operational status is required'),
@@ -158,6 +159,16 @@ const schema = yup.object().shape({
     then: () => yup.string().required('Please specify the activity'),
     otherwise: () => yup.string().notRequired(),
   }),
+  turnoverPercentage: yup.number().when('operationalStatus', {
+    is: (val) => val === 'operational',
+    then: () =>
+      yup
+        .number()
+        .required('Percentage is required')
+        .min(0, 'Percentage must be at least 0')
+        .max(100, 'Percentage must be at most 100'),
+    otherwise: () => yup.number().notRequired(),
+  }),
 });
 
 export default function IdentifyParticulateEntry() {
@@ -184,6 +195,7 @@ export default function IdentifyParticulateEntry() {
       stopReason: '',
       principalActivity: '',
       otherActivity: '',
+      turnoverPercentage: null,
     },
   });
 
@@ -336,7 +348,7 @@ export default function IdentifyParticulateEntry() {
           </Card.Body>
         </Card>
         <PrincipalActivityQuestion />
-
+        <TurnoverPercentageQuestion />
         <div className='footerBtnGroup d-flex justify-content-end'>
           <Button variant='primary' className='ms-2' type='submit'>
             Save & Continue <i className='bi bi-arrow-right-short'></i>
