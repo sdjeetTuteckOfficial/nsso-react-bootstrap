@@ -15,6 +15,7 @@ import NoLongerOperatingForm from './operations-form/no-longer-operating-form/No
 import AmalgamatedForm from './operations-form/amalgamated-form/AmalgamatedForm';
 import PrincipalActivityQuestion from './operations-form/question-five-form/PrincipalActivityQuestion';
 import TurnoverPercentageQuestion from './operations-form/turnover-percentage-form/TurnoverPercentageForm';
+import QuestionSevenForm from './operations-form/question-seven-form/QuestionSevenForm';
 
 const schema = yup.object().shape({
   operationalStatus: yup.string().required('Operational status is required'),
@@ -169,6 +170,34 @@ const schema = yup.object().shape({
         .max(100, 'Percentage must be at most 100'),
     otherwise: () => yup.number().notRequired(),
   }),
+
+  hasAmalgamated: yup.string().required('Please select an option'),
+  numberOfEnterprises: yup
+    .number()
+    .nullable()
+    .when('hasAmalgamated', {
+      is: (value) => value === 'yes',
+      then: () =>
+        yup
+          .number()
+          .required('Number of enterprises is required')
+          .min(1, 'Must be at least 1'),
+      otherwise: () => yup.number().notRequired(),
+    }),
+  enterpriseDetails: yup.array().of(
+    yup.object().shape({
+      name: yup.string().when('numberOfEnterprises', {
+        is: (val) => val > 0,
+        then: () => yup.string().required('Enterprise name is required'),
+        otherwise: () => yup.string().notRequired(),
+      }),
+      cin: yup.string().when('numberOfEnterprises', {
+        is: (val) => val > 0,
+        then: () => yup.string().required('CIN is required'),
+        otherwise: () => yup.string().notRequired(),
+      }),
+    })
+  ),
 });
 
 export default function IdentifyParticulateEntry() {
@@ -196,6 +225,9 @@ export default function IdentifyParticulateEntry() {
       principalActivity: '',
       otherActivity: '',
       turnoverPercentage: null,
+      hasAmalgamated: '',
+      numberOfEnterprises: null,
+      enterpriseDetails: null,
     },
   });
 
@@ -349,6 +381,7 @@ export default function IdentifyParticulateEntry() {
         </Card>
         <PrincipalActivityQuestion />
         <TurnoverPercentageQuestion />
+        <QuestionSevenForm />
         <div className='footerBtnGroup d-flex justify-content-end'>
           <Button variant='primary' className='ms-2' type='submit'>
             Save & Continue <i className='bi bi-arrow-right-short'></i>
