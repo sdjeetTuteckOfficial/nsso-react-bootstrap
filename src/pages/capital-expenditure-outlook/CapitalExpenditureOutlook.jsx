@@ -48,20 +48,6 @@ const CapitalExpenditureOutlook = () => {
               ))}
             </Row>
             <Row>
-              <Form.Group as={Col} lg="4" md="6" sm="12">
-                <Form.Label>
-                  No, provide the financial year from which the enterprise
-                  starts operation
-                </Form.Label>
-                <Form.Select aria-label="Default select example">
-                  <option>2021-22</option>
-                  <option>2022-23</option>
-                  <option>2023-24</option>
-                </Form.Select>
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-              </Form.Group>
-            </Row>
-            <Row>
               <Col lg={12} sm={12} md={12}>
                 <Form.Label style={{ marginTop: "2%" }}>
                   Details, of actual and proposed annual "Capital Expenditure"

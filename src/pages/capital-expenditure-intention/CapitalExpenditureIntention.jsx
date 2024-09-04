@@ -5,11 +5,69 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import {
+  requiredValidator,
+  requiredNonZeroPositiveValidator,
+} from "../../components/validator/CommonValidator";
+const tableField = [
+  "101",
+  "102",
+  "103",
+  "104",
+  "105",
+  "106",
+  "107",
+  "108",
+  "109",
+  "110",
+  "111",
+  "112",
+  "113",
+  "114",
+  "115",
+  "116",
+  "117",
+];
 
 const CapitalExpenditureIntention = () => {
+  const schemaBuilder = () => {
+    const baseSchema = yup.object().shape({
+      notReportedCapitalExpenditure: requiredValidator("reason"),
+    });
+
+    let conditionalSchema = baseSchema; // Initialize with the base schema
+
+    tableField.forEach((alertOption) => {
+      conditionalSchema = conditionalSchema.shape({
+        [`a${alertOption}field`]: requiredNonZeroPositiveValidator("field"), // Use computed property name
+      });
+    });
+    return conditionalSchema;
+  };
+
+  const schema = schemaBuilder();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  console.log("Schema", schema.fields, errors);
+
+  const onSubmit = (data) => {
+    console.log(data);
+    // navigate("/nsso-secured/test"); // Uncomment if using navigation
+  };
+
   return (
     <div>
-      <Form className="siteForm">
+      <Form className="siteForm" noValidate onSubmit={handleSubmit(onSubmit)}>
         <div className="d-flex mb-2">
           <h3 className="page-title">Capital Expenditure (CAPEX) Intention:</h3>
           <Button variant="light">
@@ -255,21 +313,69 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>101</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a101field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a101field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a101field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>Mining And Quarrying</td>
                     <td>102</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a102field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a102field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a102field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>Manufaturing</td>
                     <td>103</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a103field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a103field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a103field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -278,7 +384,23 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>104</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a104field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a104field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a104field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -288,14 +410,46 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>105</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a105field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a105field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a105field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>Construction</td>
                     <td>106</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a106field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a106field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a106field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -305,7 +459,23 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>107</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a107field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a107field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a107field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -314,7 +484,23 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>108</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a108field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a108field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a108field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -323,7 +509,23 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>109</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a109field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a109field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a109field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -332,7 +534,23 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>110</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a110field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a110field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a110field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -341,7 +559,23 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>111</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a111field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a111field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a111field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -350,7 +584,23 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>112</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a112field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a112field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a112field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -359,7 +609,23 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>113</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a113field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a113field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a113field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -369,14 +635,46 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>114</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a114field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a114field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a114field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>Education</td>
                     <td>115</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a115field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a115field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a115field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -385,7 +683,23 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>116</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a116field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a116field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a116field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr>
@@ -395,7 +709,23 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>117</td>
                     <td>
-                      <Form.Control type="text" />
+                      <Form.Group controlId="formEmail">
+                        <Controller
+                          name="a117field"
+                          control={control}
+                          defaultValue={0}
+                          render={({ field }) => (
+                            <Form.Control
+                              type="text"
+                              isInvalid={!!errors.a117field}
+                              {...field}
+                            />
+                          )}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.a117field?.message}
+                        </Form.Control.Feedback>
+                      </Form.Group>
                     </td>
                   </tr>
                   <tr style={{ textAlign: "center" }}>
@@ -419,31 +749,45 @@ const CapitalExpenditureIntention = () => {
             <Row>
               <Form.Group as={Col} lg="4" md="6" sm="12">
                 <Form.Label>Please Indicate the reason.</Form.Label>
-                <Form.Select aria-label="Default select example">
-                  <option>
-                    Zero Capital expenditure intentions for FY 2025-26
-                  </option>
-                  <option>
-                    Figures not available but plans are for no change in capital
-                    expenditures for FY 2025-26
-                  </option>
-                  <option>
-                    Figures not available but plans are for an increase in
-                    capital expenditures for FY 2025-26
-                  </option>
-                  <option>
-                    Figures not available but plans are for an decrease in
-                    capital expenditures for FY 2025-26
-                  </option>
-                </Form.Select>
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                <Controller
+                  name="notReportedCapitalExpenditure"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <Form.Select
+                      aria-label="Default select example"
+                      {...field}
+                      isInvalid={!!errors.notReportedCapitalExpenditure}
+                    >
+                      <option value="">Open this select menu</option>
+                      <option value="1">
+                        Zero Capital expenditure intentions for FY 2025-26
+                      </option>
+                      <option value="2">
+                        Figures not available but plans are for no change in
+                        capital expenditures for FY 2025-26
+                      </option>
+                      <option value="3">
+                        Figures not available but plans are for an increase in
+                        capital expenditures for FY 2025-26
+                      </option>
+                      <option value="4">
+                        Figures not available but plans are for an decrease in
+                        capital expenditures for FY 2025-26
+                      </option>
+                    </Form.Select>
+                  )}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.notReportedCapitalExpenditure?.message}
+                </Form.Control.Feedback>
               </Form.Group>
             </Row>
           </Card.Body>
         </Card>
         <div className="footerBtnGroup d-flex justify-content-end">
           <div>
-            <Button variant="primary" className="ms-2">
+            <Button variant="primary" type="submit" className="ms-2">
               Save & Continue <i class="bi bi-arrow-right-short"></i>
             </Button>
           </div>

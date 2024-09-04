@@ -341,11 +341,12 @@ export const requiredNonZeroPositiveValidator = (name) =>
     .typeError(`${name} is required and must be a number`)
     .required(`${name} is required!`)
     .positive(`${name} must be a positive number and cannot be zero`)
+    .min(0, `${name} must be greater and equal to 0`)
     .test(
-      'is-not-zero',
-      `${name} cannot be zero`,
-      (value) => value !== 0 && !isNaN(value)
-    );
+    'valid-number-range',
+    `${name} must be greater and equal to 0 and less than or equal to 100`,
+    (value) => !isNaN(value)  && value <= 100  // Updated test function
+  );
 
 export const requiredPositiveValidator = (name) =>
   yup
