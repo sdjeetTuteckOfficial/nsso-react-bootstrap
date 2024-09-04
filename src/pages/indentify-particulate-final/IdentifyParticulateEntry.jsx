@@ -16,6 +16,7 @@ import AmalgamatedForm from './operations-form/amalgamated-form/AmalgamatedForm'
 import PrincipalActivityQuestion from './operations-form/question-five-form/PrincipalActivityQuestion';
 import TurnoverPercentageQuestion from './operations-form/turnover-percentage-form/TurnoverPercentageForm';
 import QuestionSevenForm from './operations-form/question-seven-form/QuestionSevenForm';
+import BusinessOperationLocation from './operations-form/question-four/BusinessOperationLocation';
 
 const schema = yup.object().shape({
   operationalStatus: yup.string().required('Operational status is required'),
@@ -198,6 +199,37 @@ const schema = yup.object().shape({
       }),
     })
   ),
+  businessOperationLocation: yup.array().when('operationalStatus', {
+    is: (value) => value === 'operational',
+    then: () =>
+      yup
+        .array()
+        .min(1, 'At least one state is required')
+        .required('Place of business operation is required'),
+    otherwise: () =>
+      yup.array().when('additionalInfo', {
+        is: (value) => value === 'seasonal',
+        then: () =>
+          yup
+            .array()
+            .min(1, 'At least one state is required during seasonal operation')
+            .required(
+              'Place of business operation during seasonal status is required'
+            ),
+        otherwise: () =>
+          yup.array().when('additionalInfo', {
+            is: (value) => value === 'inactive',
+            then: () =>
+              yup
+                .array()
+                .min(1, 'At least one state is required for inactive status')
+                .required(
+                  'Place of business operation for inactive status is required'
+                ),
+            otherwise: () => yup.array().notRequired(),
+          }),
+      }),
+  }),
 });
 
 export default function IdentifyParticulateEntry() {
@@ -379,6 +411,7 @@ export default function IdentifyParticulateEntry() {
             </Card.Text>
           </Card.Body>
         </Card>
+        <BusinessOperationLocation />
         <PrincipalActivityQuestion />
         <TurnoverPercentageQuestion />
         <QuestionSevenForm />
