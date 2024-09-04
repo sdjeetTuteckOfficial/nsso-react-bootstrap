@@ -8,6 +8,12 @@ import { Row, Col, Card } from 'react-bootstrap';
 import BasicInformationCard from './basic-information/BasicInformationCard';
 import { enterpriseData, contactInfoData } from './demo-data/data';
 import SeasonalOperationDetails from './operations-form/seasonal-details-form/SeasonalDetailsForm';
+import CeasedOperationDetails from './operations-form/ceased-operation-form/CeasedOperationsForm';
+import SoldOperationsForm from './operations-form/sold-operations/SoldOperations';
+import TemporarilyInactiveForm from './operations-form/temporarily-inactive-form/TemporarilyInactiveForm';
+import NoLongerOperatingForm from './operations-form/no-longer-operating-form/NoLongerOperatingForm';
+import AmalgamatedForm from './operations-form/amalgamated-form/AmalgamatedForm';
+import PrincipalActivityQuestion from './operations-form/question-five-form/PrincipalActivityQuestion';
 
 const schema = yup.object().shape({
   operationalStatus: yup.string().required('Operational status is required'),
@@ -17,15 +23,140 @@ const schema = yup.object().shape({
       yup.string().required('Additional info is required when not operational'),
     otherwise: () => yup.string().notRequired(),
   }),
-  closeDate: yup.string().when('additionalInfo', {
-    is: (val) => val === 'seasonal',
-    then: () => yup.date().required('Close date is required'),
-    otherwise: () => yup.date().notRequired(),
+  closeDate: yup
+    .date()
+    .nullable()
+    .transform((value, originalValue) =>
+      originalValue === '' ? null : new Date(originalValue)
+    )
+    .when('additionalInfo', {
+      is: (val) => val === 'seasonal',
+      then: () => yup.date().nullable().required('Close date is required'),
+      otherwise: () => yup.date().nullable().notRequired(),
+    }),
+  resumeDate: yup
+    .date()
+    .nullable()
+    .transform((value, originalValue) =>
+      originalValue === '' ? null : new Date(originalValue)
+    )
+    .when('additionalInfo', {
+      is: (val) => val === 'seasonal',
+      then: () => yup.date().nullable().required('Resume date is required'),
+      otherwise: () => yup.date().nullable().notRequired(),
+    }),
+  ceaseDate: yup
+    .date()
+    .nullable()
+    .when('additionalInfo', {
+      is: (val) => val === 'ceased',
+      then: () => yup.date().required('Cease date is required'),
+      otherwise: () => yup.date().notRequired(),
+    }),
+  ceaseReason: yup.string().when('additionalInfo', {
+    is: (val) => val === 'ceased',
+    then: () => yup.string().required('Cease reason is required'),
+    otherwise: () => yup.string().notRequired(),
   }),
-  resumeDate: yup.string().when('additionalInfo', {
-    is: (val) => val === 'seasonal',
-    then: () => yup.date().required('Resume date is required'),
-    otherwise: () => yup.date().notRequired(),
+  ceaseComment: yup.string().when('additionalInfo', {
+    is: (val) => val === 'ceased',
+    then: () =>
+      yup
+        .string()
+        .max(250, 'Comment must be at most 250 characters')
+        .notRequired(),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  soldDate: yup
+    .date()
+    .nullable()
+    .when('additionalInfo', {
+      is: (val) => val === 'sold',
+      then: () => yup.date().required('Cease date is required'),
+      otherwise: () => yup.date().notRequired(),
+    }),
+  buyerCIN: yup.string().when('additionalInfo', {
+    is: (val) => val === 'sold',
+    then: () => yup.string().required('Buyer CIN is required'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  buyerLegalName: yup.string().when('additionalInfo', {
+    is: (val) => val === 'sold',
+    then: () => yup.string().required('Buyer legal name is required'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  inactiveDate: yup
+    .date()
+    .nullable()
+    .when('additionalInfo', {
+      is: (val) => val === 'inactive',
+      then: () =>
+        yup.date().required('Date of temporary inactivity is required'),
+      otherwise: () => yup.date().notRequired(),
+    }),
+  resumeDateTemp: yup
+    .date()
+    .nullable()
+    .when('additionalInfo', {
+      is: (val) => val === 'inactive',
+      then: () => yup.date().required('Expected resume date is required'),
+      otherwise: () => yup.date().notRequired(),
+    }),
+  inactiveReason: yup.string().when('additionalInfo', {
+    is: (val) => val === 'inactive',
+    then: () =>
+      yup
+        .string()
+        .max(250, 'Comment must be at most 250 characters')
+        .notRequired(),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  stopDate: yup
+    .date()
+    .nullable()
+    .when('additionalInfo', {
+      is: (val) => val === 'other',
+      then: () =>
+        yup.date().required('Date of stopping operations is required'),
+      otherwise: () => yup.date().notRequired(),
+    }),
+  stopReason: yup.string().when('additionalInfo', {
+    is: (val) => val === 'other',
+    then: () =>
+      yup.string().required('Reason for stopping operations is required'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  amalgamateDate: yup
+    .date()
+    .nullable()
+    .when('additionalInfo', {
+      is: (val) => val === 'amalgamated',
+      then: () => yup.date().required('Amalgamation date is required'),
+      otherwise: () => yup.date().notRequired(),
+    }),
+  resultingCIN: yup.string().when('additionalInfo', {
+    is: (val) => val === 'amalgamated',
+    then: () =>
+      yup.string().required('CIN of the resulting enterprise is required'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  resultingLegalName: yup.string().when('additionalInfo', {
+    is: (val) => val === 'amalgamated',
+    then: () =>
+      yup
+        .string()
+        .required('Legal name of the resulting enterprise is required'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  principalActivity: yup.string().when('operationalStatus', {
+    is: (val) => val === 'operational',
+    then: () => yup.string().required('This is required field'),
+    otherwise: () => yup.string().notRequired(),
+  }),
+  otherActivity: yup.string().when('principalActivity', {
+    is: (val) => val === '118',
+    then: () => yup.string().required('Please specify the activity'),
+    otherwise: () => yup.string().notRequired(),
   }),
 });
 
@@ -38,10 +169,28 @@ export default function IdentifyParticulateEntry() {
     defaultValues: {
       operationalStatus: '',
       additionalInfo: '',
-      closeDate: '',
-      resumeDate: '',
+      closeDate: null,
+      resumeDate: null,
+      ceaseDate: null,
+      ceaseReason: '',
+      ceaseComment: '',
+      soldDate: null,
+      buyerCIN: '',
+      buyerLegalName: '',
+      inactiveDate: null,
+      resumeDateTemp: null,
+      inactiveReason: '',
+      stopDate: null,
+      stopReason: '',
+      principalActivity: '',
+      otherActivity: '',
     },
   });
+
+  const {
+    setValue,
+    formState: { errors },
+  } = methods;
 
   const onSubmit = (data) => {
     console.log(data);
@@ -51,12 +200,19 @@ export default function IdentifyParticulateEntry() {
     if (value === 'operational') {
       //do setValues
       setWhyNotOperational('');
+      setValue('closeDate', null);
+      setValue('resumeDate', null);
+      setValue('additionalInfo', '');
+      setValue('ceaseDate', null);
+      setValue('ceaseComment', '');
+      setValue('ceaseReason', '');
     }
     setShowDropdown(value === 'non-operational');
   };
 
   return (
     <FormProvider {...methods}>
+      {console.log('err', errors)}
       <Form className='siteForm' onSubmit={methods.handleSubmit(onSubmit)}>
         <div className='d-flex mb-2'>
           <h3 className='page-title'>Identification Particulars Entry</h3>
@@ -130,7 +286,9 @@ export default function IdentifyParticulateEntry() {
                 </Form.Group>
                 {showDropdown && (
                   <Form.Group as={Col} lg='12' md='12' sm='12'>
-                    <Form.Label>Additional Information</Form.Label>
+                    <Form.Label>
+                      Why is this enterprise not currently operational?
+                    </Form.Label>
                     <Controller
                       name='additionalInfo'
                       control={methods.control}
@@ -144,6 +302,9 @@ export default function IdentifyParticulateEntry() {
                           aria-label='Additional Information'
                           isInvalid={!!methods.formState.errors.additionalInfo}
                         >
+                          <option value='' disabled>
+                            Select an option
+                          </option>
                           <option value='seasonal'>Seasonal operations</option>
                           <option value='ceased'>Ceased operations</option>
                           <option value='sold'>Sold operations</option>
@@ -163,10 +324,18 @@ export default function IdentifyParticulateEntry() {
                 {whyNotOperational === 'seasonal' && (
                   <SeasonalOperationDetails />
                 )}
+                {whyNotOperational === 'ceased' && <CeasedOperationDetails />}
+                {whyNotOperational === 'sold' && <SoldOperationsForm />}
+                {whyNotOperational === 'amalgamated' && <AmalgamatedForm />}
+                {whyNotOperational === 'inactive' && (
+                  <TemporarilyInactiveForm />
+                )}
+                {whyNotOperational === 'other' && <NoLongerOperatingForm />}
               </Row>
             </Card.Text>
           </Card.Body>
         </Card>
+        <PrincipalActivityQuestion />
 
         <div className='footerBtnGroup d-flex justify-content-end'>
           <Button variant='primary' className='ms-2' type='submit'>

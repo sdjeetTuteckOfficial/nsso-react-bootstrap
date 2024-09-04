@@ -1,7 +1,7 @@
 import { useFormContext, Controller } from 'react-hook-form';
 import { Row, Col, Form } from 'react-bootstrap';
 
-function SeasonalOperationDetails() {
+function NoLongerOperatingForm() {
   const {
     control,
     formState: { errors },
@@ -10,43 +10,42 @@ function SeasonalOperationDetails() {
   return (
     <Row>
       <Form.Group as={Col} lg='6' md='6' sm='12'>
-        <Form.Label>When did this enterprise close for the season?</Form.Label>
+        <Form.Label>When did this enterprise stop operations?</Form.Label>
         <Controller
-          name='closeDate'
+          name='stopDate'
           control={control}
           render={({ field }) => (
             <Form.Control
               type='date'
               {...field}
-              isInvalid={!!errors.closeDate}
+              isInvalid={!!errors.stopDate}
             />
           )}
         />
-        {errors.closeDate && (
-          <p className='text-danger'>{errors.closeDate.message}</p>
+        {errors.stopDate && (
+          <p className='text-danger'>{errors.stopDate.message}</p>
         )}
       </Form.Group>
-      <Form.Group as={Col} lg='6' md='6' sm='12'>
-        <Form.Label>
-          When does this enterprise expect to resume operations?
-        </Form.Label>
+      <Form.Group as={Col} lg='12'>
+        <Form.Label>Why did this enterprise stop operations?</Form.Label>
         <Controller
-          name='resumeDate'
+          name='stopReason'
           control={control}
           render={({ field }) => (
             <Form.Control
-              type='date'
+              as='textarea'
+              rows={3}
               {...field}
-              isInvalid={!!errors.resumeDate}
+              isInvalid={!!errors.stopReason}
             />
           )}
         />
-        {errors.resumeDate && (
-          <p className='text-danger'>{errors.resumeDate.message}</p>
+        {errors.stopReason && (
+          <p className='text-danger'>{errors.stopReason.message}</p>
         )}
       </Form.Group>
     </Row>
   );
 }
 
-export default SeasonalOperationDetails;
+export default NoLongerOperatingForm;
