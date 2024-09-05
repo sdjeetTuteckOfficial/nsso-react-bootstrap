@@ -1,10 +1,10 @@
+import { useState, useEffect } from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
-import { useState, useEffect } from "react";
 // import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm, Controller } from "react-hook-form";
@@ -14,10 +14,21 @@ import {
   requiredValidator,
   requiredValidatorOfArrayNew,
 } from "../../components/validator/CommonValidator";
+import Select from "react-select";
+import { useDispatch, useSelector } from "react-redux";
+import { initializeSection } from "../../redux/form-slice/formSlice";
+import { fetchData } from "../../redux/network-slice/slice";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+let baseUrl = "http://10.48.16.236:83/api";
 
 export default function WelcomeHome() {
   const [editSection, setEditSection] = useState(false);
   const [editSection2, setEditSection2] = useState(false);
+  const [userData, setUserData] = useState({});
+  const token = sessionStorage.getItem("token");
+  const navigate = useNavigate();
 
   const schemaBuilder = (editSection, editSection2) => {
     const baseSchema = yup.object().shape({});
@@ -59,11 +70,95 @@ export default function WelcomeHome() {
     resolver: yupResolver(schema),
   });
 
-  console.log("schemas...", schema.fields);
+  const getUserInfo = () => {
+    axios
+      .get(
+        `${baseUrl}/SURVEY/v1/IndustryMaster/GetIndustryBasicInformationAsync`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        setUserData(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   let url = "/SURVEY/v1/IndustryMaster/GetIndustryBasicInformationAsync";
+  //   dispatch(
+  //     fetchData([
+  //       {
+  //         url: url,
+  //         method: "GET",
+  //         // key: "state_data",
+  //       },
+  //     ])
+  //   );
+  // }, []);
+  // const reduxData = useSelector((state) => state.responseSlice.data);
+  // console.log("reduxData", reduxData);
 
   const onSubmit = (data) => {
     console.log(data);
-    // navigate("/nsso-secured/test"); // Uncomment if using navigation
+    const payload = {
+      legal_name: editSection ? data.legal_name : userData.legal_name,
+      operating_name: editSection
+        ? data.operating_name
+        : userData.operating_name,
+      cin_number: editSection ? data.cin_number : userData.cin_number,
+      company_address: editSection
+        ? data.company_address
+        : userData.company_address,
+      company_gstn: editSection ? data.company_gstn : userData.company_gstn,
+      company_email: editSection ? data.company_email : userData.company_email,
+      first_name: editSection2 ? data.first_name : userData.first_name,
+      last_name: editSection2 ? data.last_name : userData.last_name,
+      designation: editSection2 ? data.designation : userData.designation,
+      contact_mobile: editSection2
+        ? data.contact_mobile
+        : userData.contact_mobile,
+      contact_telephone: editSection2
+        ? data.contact_telephone
+        : userData.contact_telephone,
+      contact_email: editSection2 ? data.contact_email : userData.contact_email,
+      address_id: userData.addressId,
+      lookup_industry_type: userData.lookup_industry_type,
+      industry_id: 0,
+      middle_name: "",
+      contact_address: editSection2 ? data.contact_address : "",
+      id: userData.id,
+      created_by: userData.created_by,
+      created_on: userData.created_on,
+      modified_by: 0,
+      modified_on: "2024-09-05T16:38:54.125Z",
+      isDeleted: false,
+      isActive: true,
+    };
+
+    axios
+      .post(
+        `${baseUrl}/SURVEY/v1/IndustryMaster/UpdateIndustryBasicInformationAsync`,
+        payload,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+      .then((response) => {
+        setUserData({});
+        navigate("/nsso-secured/identify-particulate-1");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (
@@ -73,7 +168,7 @@ export default function WelcomeHome() {
           <Card.Body>
             <Card.Title>
               <h2 className="mb-3">
-                Welcome ! <span>Company Name</span>
+                Welcome ! <span>{userData?.legal_name}</span>
               </h2>
               <p className="f-s-16">
                 To Start Servey Plesae Verify 1 & 2 Question
@@ -91,7 +186,12 @@ export default function WelcomeHome() {
             <Row className="mt-4">
               <div href="#" className="col-md-6">
                 {" "}
-                <Button variant="primary" onClick={() => console.log(fields)}>
+                <Button
+                  variant="primary"
+                  onClick={() =>
+                    navigate("/nsso-secured/identify-particulate-1")
+                  }
+                >
                   Start Now<i className="bi bi-arrow-right-short"></i>
                 </Button>
               </div>
@@ -101,10 +201,10 @@ export default function WelcomeHome() {
               >
                 <span>
                   <strong className="text-truncate text-muted">
-                    Abhishek Ghosh
+                    {`${userData.first_name} ${userData.last_name}`}
                   </strong>
                   <p className="mb-0 text-grey text-truncate">
-                    abhishek.ghosh@tuteck.com
+                    {userData.contact_email}
                   </p>
                 </span>
               </div>
@@ -147,6 +247,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="cin_number"
                       control={control}
+                      defaultValue={userData.cin_number || ""}
                       render={({ field }) => (
                         <Form.Control
                           type="text"
@@ -162,7 +263,7 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abcde</p>
+                  <p>{userData.cin_number}</p>
                 )}
               </Form.Group>
 
@@ -173,6 +274,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="legal_name"
                       control={control}
+                      defaultValue={userData.legal_name || ""}
                       render={({ field }) => (
                         <Form.Control
                           type="text"
@@ -188,9 +290,10 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abc</p>
+                  <p>{userData.legal_name}</p>
                 )}
               </Form.Group>
+
               <Form.Group as={Col} lg="4" md="6" sm="12">
                 <Form.Label>Operating name of the enterprise</Form.Label>
                 {editSection ? (
@@ -198,6 +301,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="operating_name"
                       control={control}
+                      defaultValue={userData.operating_name || ""}
                       render={({ field }) => (
                         <Form.Control
                           type="text"
@@ -213,9 +317,10 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abc</p>
+                  <p>{userData.operating_name}</p>
                 )}
               </Form.Group>
+
               <Form.Group as={Col} lg="12" md="12" sm="12">
                 <Form.Label>Company Address of the enterprise</Form.Label>
                 {editSection ? (
@@ -223,6 +328,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="company_address"
                       control={control}
+                      defaultValue={userData.company_address || ""}
                       render={({ field }) => (
                         <Form.Control
                           as="textarea"
@@ -239,9 +345,10 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abc</p>
+                  <p>{userData.company_address}</p>
                 )}
               </Form.Group>
+
               <Form.Group as={Col} lg="4" md="6" sm="12">
                 <Form.Label>Company Email ID</Form.Label>
                 {editSection ? (
@@ -249,6 +356,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="company_email"
                       control={control}
+                      defaultValue={userData.company_email || ""}
                       render={({ field }) => (
                         <Form.Control
                           type="text"
@@ -264,9 +372,10 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abc</p>
+                  <p>{userData.company_email}</p>
                 )}
               </Form.Group>
+
               <Form.Group as={Col} lg="4" md="6" sm="12">
                 <Form.Label>GSTN of the enterprise</Form.Label>
                 {editSection ? (
@@ -274,6 +383,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="company_gstn"
                       control={control}
+                      defaultValue={userData.company_gstn || ""}
                       render={({ field }) => (
                         <Form.Control
                           type="text"
@@ -289,7 +399,7 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abc</p>
+                  <p>{userData.company_gstn}</p>
                 )}
               </Form.Group>
             </Row>
@@ -330,6 +440,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="first_name"
                       control={control}
+                      defaultValue={userData.first_name || ""}
                       render={({ field }) => (
                         <Form.Control
                           type="text"
@@ -345,10 +456,11 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abc</p>
+                  <p>{userData.first_name}</p>
                 )}
               </Form.Group>
-              <Form.Group as={Col} lg="4" md="6" sm="12">
+
+              {/* <Form.Group as={Col} lg="4" md="6" sm="12">
                 <Form.Label>Middle Name</Form.Label>
                 {editSection2 ? (
                   <>
@@ -372,7 +484,8 @@ export default function WelcomeHome() {
                 ) : (
                   <p>abc</p>
                 )}
-              </Form.Group>
+              </Form.Group> */}
+
               <Form.Group as={Col} lg="4" md="6" sm="12">
                 <Form.Label>Last Name</Form.Label>
                 {editSection2 ? (
@@ -380,6 +493,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="last_name"
                       control={control}
+                      defaultValue={userData.last_name || ""}
                       render={({ field }) => (
                         <Form.Control
                           type="text"
@@ -395,9 +509,10 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abc</p>
+                  <p>{userData.last_name}</p>
                 )}
               </Form.Group>
+
               <Form.Group as={Col} lg="4" md="6" sm="12">
                 <Form.Label>Designation</Form.Label>
                 {editSection2 ? (
@@ -405,6 +520,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="designation"
                       control={control}
+                      defaultValue={userData.designation || ""}
                       render={({ field }) => (
                         <Form.Control
                           type="text"
@@ -420,9 +536,10 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abc</p>
+                  <p>{userData.designation}</p>
                 )}
               </Form.Group>
+
               <Form.Group as={Col} lg="4" md="6" sm="12">
                 <Form.Label>Email ID</Form.Label>
                 {editSection2 ? (
@@ -430,6 +547,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="contact_email"
                       control={control}
+                      defaultValue={userData.contact_email || ""}
                       render={({ field }) => (
                         <Form.Control
                           type="text"
@@ -445,9 +563,10 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abc</p>
+                  <p>{userData.contact_email}</p>
                 )}
               </Form.Group>
+
               <Form.Group as={Col} lg="4" md="6" sm="12">
                 <Form.Label>Mobile No</Form.Label>
                 {editSection2 ? (
@@ -455,6 +574,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="contact_mobile"
                       control={control}
+                      defaultValue={userData.contact_mobile || ""}
                       render={({ field }) => (
                         <Form.Control
                           type="text"
@@ -470,9 +590,10 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abc</p>
+                  <p>{userData.contact_mobile}</p>
                 )}
               </Form.Group>
+
               <Form.Group as={Col} lg="4" md="6" sm="12">
                 <Form.Label>TelePhone No</Form.Label>
                 {editSection2 ? (
@@ -480,6 +601,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="contact_telephone"
                       control={control}
+                      defaultValue={userData.contact_telephone || ""}
                       render={({ field }) => (
                         <Form.Control
                           type="text"
@@ -495,9 +617,10 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abc</p>
+                  <p>{userData.contact_telephone}</p>
                 )}
               </Form.Group>
+
               <Form.Group as={Col} lg="12" md="12" sm="12">
                 <Form.Label>Postal Address</Form.Label>
                 {editSection2 ? (
@@ -505,6 +628,7 @@ export default function WelcomeHome() {
                     <Controller
                       name="contact_address"
                       control={control}
+                      defaultValue={userData.contact_address || ""}
                       render={({ field }) => (
                         <Form.Control
                           as="textarea"
@@ -520,7 +644,7 @@ export default function WelcomeHome() {
                     </Form.Control.Feedback>
                   </>
                 ) : (
-                  <p>abc</p>
+                  <p>{userData.contact_address}</p>
                 )}
               </Form.Group>
             </Row>
@@ -538,7 +662,7 @@ export default function WelcomeHome() {
           <div className="footerBtnGroup d-flex justify-content-end">
             <div>
               <Button
-                onClick={(event) => _handleSubmit(event)}
+                onClick={() => navigate("/nsso-secured/identify-particulate-1")}
                 variant="primary"
                 className="ms-2"
               >
