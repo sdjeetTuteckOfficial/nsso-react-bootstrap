@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import { Row, Col, Form, Button } from 'react-bootstrap';
 import MultiCompanyCin from './multiple-company-cin/MultiCompanyCin';
 
-function AmalgamatedForm() {
+function AmalgamatedForm({ handleCompanyData }) {
   const [showMultiCompanyCin, setShowMultiCompanyCin] = useState(false);
   const {
     control,
@@ -11,8 +11,9 @@ function AmalgamatedForm() {
   } = useFormContext();
 
   // Function to handle MultiCompanyCin form submission
-  const handleMultiCompanyCinSubmit = () => {
-    setShowMultiCompanyCin(false); // Hide the MultiCompanyCin form
+  const handleMultiCompanyCinSubmit = (companyData) => {
+    console.log('com', companyData);
+    handleCompanyData(companyData);
   };
 
   return (

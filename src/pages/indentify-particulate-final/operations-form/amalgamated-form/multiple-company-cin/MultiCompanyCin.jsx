@@ -46,7 +46,7 @@ const MultiCompanyCin = ({ handleMultiCompanyCinSubmit }) => {
     const companyData = { id: uuidv4(), ...data };
     setCompanyList((prevList) => [...prevList, companyData]);
     handleClear();
-    // handleMultiCompanyCinSubmit();
+    handleMultiCompanyCinSubmit(companyData);
   };
 
   // Handle form clear
@@ -55,7 +55,6 @@ const MultiCompanyCin = ({ handleMultiCompanyCinSubmit }) => {
       legalName: '',
       cin: '',
     });
-    handleMultiCompanyCinSubmit();
     setError(null); // Clear error message
   };
 
