@@ -76,7 +76,7 @@ function AmalgamatedForm({ handleCompanyData }) {
         )}
       </Form.Group>
 
-      <Col lg='12' className='text-start mt-4'>
+      {/* <Col lg='12' className='text-start mt-4'>
         <Button
           variant='primary'
           size='sm'
@@ -84,13 +84,17 @@ function AmalgamatedForm({ handleCompanyData }) {
         >
           Add previous company legal name and CIN
         </Button>
-      </Col>
+      </Col> */}
 
-      {showMultiCompanyCin && (
-        <Col lg='12' className='mt-4'>
-          <MultiCompanyCin onSubmit={handleMultiCompanyCinSubmit} />
-        </Col>
-      )}
+      {/* {showMultiCompanyCin && ( */}
+      <Col lg='12' className='mt-4'>
+        <MultiCompanyCin
+          label='Provide company legal and cin name (upto 5)'
+          countNumber={5}
+          onSubmit={handleMultiCompanyCinSubmit}
+        />
+      </Col>
+      {/* )} */}
     </Row>
   );
 }

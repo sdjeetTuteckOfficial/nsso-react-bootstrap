@@ -1,5 +1,6 @@
 import { Form, Col, Card } from 'react-bootstrap';
 import { useFormContext, Controller, useFieldArray } from 'react-hook-form';
+import MultiCinAdd from './multiple-company-cin-seven/MultiCinAdd';
 
 const QuestionSevenForm = () => {
   const {
@@ -98,8 +99,13 @@ const QuestionSevenForm = () => {
                 {errors.numberOfEnterprises?.message}
               </Form.Control.Feedback>
             </Form.Group>
-
-            <div className='row'>
+            {numberOfEnterprises && (
+              <MultiCinAdd
+                countNumber={numberOfEnterprises}
+                label={`Please add ${numberOfEnterprises} company details`}
+              />
+            )}
+            {/* <div className='row'>
               {fields.map((item, index) => (
                 <div key={item.id} className='col-lg-6 col-md-12 mb-3'>
                   <Form.Group as={Col} lg='6' md='6' sm='12'>
@@ -139,7 +145,7 @@ const QuestionSevenForm = () => {
                   </Form.Group>
                 </div>
               ))}
-            </div>
+            </div> */}
           </>
         )}
       </Card.Body>
