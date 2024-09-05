@@ -21,7 +21,7 @@ import BusinessOperationLocation from './operations-form/question-four/BusinessO
 const schema = yup.object().shape({
   operationalStatus: yup.string().required('Operational status is required'),
   additionalInfo: yup.string().when('operationalStatus', {
-    is: (val) => val === 'non-operational',
+    is: (val) => val === '2',
     then: () =>
       yup.string().required('Additional info is required when not operational'),
     otherwise: () => yup.string().notRequired(),
@@ -33,7 +33,7 @@ const schema = yup.object().shape({
       originalValue === '' ? null : new Date(originalValue)
     )
     .when('additionalInfo', {
-      is: (val) => val === 'seasonal',
+      is: (val) => val === '21',
       then: () => yup.date().nullable().required('Close date is required'),
       otherwise: () => yup.date().nullable().notRequired(),
     }),
@@ -44,7 +44,7 @@ const schema = yup.object().shape({
       originalValue === '' ? null : new Date(originalValue)
     )
     .when('additionalInfo', {
-      is: (val) => val === 'seasonal',
+      is: (val) => val === '21',
       then: () => yup.date().nullable().required('Resume date is required'),
       otherwise: () => yup.date().nullable().notRequired(),
     }),
@@ -52,17 +52,17 @@ const schema = yup.object().shape({
     .date()
     .nullable()
     .when('additionalInfo', {
-      is: (val) => val === 'ceased',
+      is: (val) => val === '22',
       then: () => yup.date().required('Cease date is required'),
       otherwise: () => yup.date().notRequired(),
     }),
   ceaseReason: yup.string().when('additionalInfo', {
-    is: (val) => val === 'ceased',
+    is: (val) => val === '22',
     then: () => yup.string().required('Cease reason is required'),
     otherwise: () => yup.string().notRequired(),
   }),
   ceaseComment: yup.string().when('additionalInfo', {
-    is: (val) => val === 'ceased',
+    is: (val) => val === '22',
     then: () =>
       yup
         .string()
@@ -74,17 +74,17 @@ const schema = yup.object().shape({
     .date()
     .nullable()
     .when('additionalInfo', {
-      is: (val) => val === 'sold',
+      is: (val) => val === '23',
       then: () => yup.date().required('Cease date is required'),
       otherwise: () => yup.date().notRequired(),
     }),
   buyerCIN: yup.string().when('additionalInfo', {
-    is: (val) => val === 'sold',
+    is: (val) => val === '23',
     then: () => yup.string().required('Buyer CIN is required'),
     otherwise: () => yup.string().notRequired(),
   }),
   buyerLegalName: yup.string().when('additionalInfo', {
-    is: (val) => val === 'sold',
+    is: (val) => val === '23',
     then: () => yup.string().required('Buyer legal name is required'),
     otherwise: () => yup.string().notRequired(),
   }),
@@ -92,7 +92,7 @@ const schema = yup.object().shape({
     .date()
     .nullable()
     .when('additionalInfo', {
-      is: (val) => val === 'inactive',
+      is: (val) => val === '25',
       then: () =>
         yup.date().required('Date of temporary inactivity is required'),
       otherwise: () => yup.date().notRequired(),
@@ -101,12 +101,12 @@ const schema = yup.object().shape({
     .date()
     .nullable()
     .when('additionalInfo', {
-      is: (val) => val === 'inactive',
+      is: (val) => val === '25',
       then: () => yup.date().required('Expected resume date is required'),
       otherwise: () => yup.date().notRequired(),
     }),
   inactiveReason: yup.string().when('additionalInfo', {
-    is: (val) => val === 'inactive',
+    is: (val) => val === '25',
     then: () =>
       yup
         .string()
@@ -118,13 +118,13 @@ const schema = yup.object().shape({
     .date()
     .nullable()
     .when('additionalInfo', {
-      is: (val) => val === 'other',
+      is: (val) => val === '29',
       then: () =>
         yup.date().required('Date of stopping operations is required'),
       otherwise: () => yup.date().notRequired(),
     }),
   stopReason: yup.string().when('additionalInfo', {
-    is: (val) => val === 'other',
+    is: (val) => val === '29',
     then: () =>
       yup.string().required('Reason for stopping operations is required'),
     otherwise: () => yup.string().notRequired(),
@@ -133,36 +133,36 @@ const schema = yup.object().shape({
     .date()
     .nullable()
     .when('additionalInfo', {
-      is: (val) => val === 'amalgamated',
+      is: (val) => val === '24',
       then: () => yup.date().required('Amalgamation date is required'),
       otherwise: () => yup.date().notRequired(),
     }),
   resultingCIN: yup.string().when('additionalInfo', {
-    is: (val) => val === 'amalgamated',
+    is: (val) => val === '24',
     then: () =>
       yup.string().required('CIN of the resulting enterprise is required'),
     otherwise: () => yup.string().notRequired(),
   }),
   resultingLegalName: yup.string().when('additionalInfo', {
-    is: (val) => val === 'amalgamated',
+    is: (val) => val === '24',
     then: () =>
       yup
         .string()
         .required('Legal name of the resulting enterprise is required'),
     otherwise: () => yup.string().notRequired(),
   }),
-  principalActivity: yup.array().when('operationalStatus', {
-    is: (value) => value === 'operational',
+  principalActivity: yup.string().when('operationalStatus', {
+    is: (value) => value === '1',
     then: () => yup.string().required('This is required field'),
     otherwise: () =>
-      yup.array().when('additionalInfo', {
-        is: (value) => value === 'seasonal',
+      yup.string().when('additionalInfo', {
+        is: (value) => value === '21',
         then: () => yup.string().required('This is required field'),
         otherwise: () =>
-          yup.array().when('additionalInfo', {
-            is: (value) => value === 'inactive',
+          yup.string().when('additionalInfo', {
+            is: (value) => value === '25',
             then: () => yup.string().required('This is required field'),
-            otherwise: () => yup.array().notRequired(),
+            otherwise: () => yup.string().notRequired(),
           }),
       }),
   }),
@@ -172,7 +172,7 @@ const schema = yup.object().shape({
     otherwise: () => yup.string().notRequired(),
   }),
   turnoverPercentage: yup.number().when('operationalStatus', {
-    is: (val) => val === 'operational',
+    is: (val) => val === '1',
     then: () =>
       yup
         .number()
@@ -186,7 +186,7 @@ const schema = yup.object().shape({
     .number()
     .nullable()
     .when('hasAmalgamated', {
-      is: (value) => value === 'yes',
+      is: (value) => value === '1',
       then: () =>
         yup
           .number()
@@ -210,7 +210,7 @@ const schema = yup.object().shape({
     })
   ),
   businessOperationLocation: yup.array().when('operationalStatus', {
-    is: (value) => value === 'operational',
+    is: (value) => value === '1',
     then: () =>
       yup
         .array()
@@ -218,7 +218,7 @@ const schema = yup.object().shape({
         .required('Place of business operation is required'),
     otherwise: () =>
       yup.array().when('additionalInfo', {
-        is: (value) => value === 'seasonal',
+        is: (value) => value === '21',
         then: () =>
           yup
             .array()
@@ -228,7 +228,7 @@ const schema = yup.object().shape({
             ),
         otherwise: () =>
           yup.array().when('additionalInfo', {
-            is: (value) => value === 'inactive',
+            is: (value) => value === '25',
             then: () =>
               yup
                 .array()
@@ -281,10 +281,49 @@ export default function IdentifyParticulateEntry() {
 
   const onSubmit = (data) => {
     console.log(data);
+    const saved_Data = {
+      r_3: data.operationalStatus,
+      r_3_1: data.additionalInfo,
+      r_3_1_1: {
+        r_3_1_1_1: data.closeDate,
+        r_3_1_1_2: data.resumeDate,
+      },
+      r_3_1_2: {
+        r_3_1_2_1: data.ceaseDate,
+        r_3_1_2_2: data.ceaseReason,
+      },
+      r_3_1_3: {
+        r_3_1_3_1: data.soldDate,
+        r_3_1_3_2: data.buyerCIN,
+        r_3_1_3_3: data.buyerLegalName,
+      },
+      r_3_1_4: {
+        r_3_1_4_1: data.amalgamateDate,
+        r_3_1_4_2: data.resultingCIN,
+        r_3_1_4_3: data.resultingLegalName,
+        r_3_1_4_4: amalgamatedCompanyData,
+      },
+      r_3_1_5: {
+        r_3_1_5_1: data.inactiveDate,
+        r_3_1_5_2: data.resumeDateTemp,
+        r_3_1_5_3: data.inactiveReason,
+      },
+      r_3_1_6: {
+        r_3_1_6_1: data.stopDate,
+        r_3_1_6_2: data.stopReason,
+      },
+      r_4: data.businessOperationLocation,
+      r_5: data.principalActivity,
+      r_6: data.turnoverPercentage,
+      r_7: data.hasAmalgamated,
+      r_7_1: data.numberOfEnterprises,
+      r_7_2: '',
+    };
+    console.log('saved response', saved_Data);
   };
 
   const handleStatusChange = (value) => {
-    if (value === 'operational') {
+    if (value === '1') {
       //do setValues
       setWhyNotOperational('');
       setValue('closeDate', null);
@@ -294,7 +333,7 @@ export default function IdentifyParticulateEntry() {
       setValue('ceaseComment', '');
       setValue('ceaseReason', '');
     }
-    setShowDropdown(value === 'non-operational');
+    setShowDropdown(value === '2');
   };
 
   const handleCompanyData = (data) => {
@@ -345,26 +384,26 @@ export default function IdentifyParticulateEntry() {
                           inline
                           label='Operational'
                           type='radio'
-                          value='operational'
+                          value='1'
                           id='operational'
                           onChange={(e) => {
                             field.onChange(e.target.value);
                             handleStatusChange(e.target.value);
                           }}
-                          checked={field.value === 'operational'}
+                          checked={field.value === '1'}
                           className='me-3'
                         />
                         <Form.Check
                           inline
                           label='Not currently operational'
                           type='radio'
-                          value='non-operational'
+                          value='2'
                           id='not-operational'
                           onChange={(e) => {
                             field.onChange(e.target.value);
                             handleStatusChange(e.target.value);
                           }}
-                          checked={field.value === 'non-operational'}
+                          checked={field.value === '2'}
                           className='me-3'
                         />
                       </>
@@ -397,12 +436,14 @@ export default function IdentifyParticulateEntry() {
                           <option value='' disabled>
                             Select an option
                           </option>
-                          <option value='seasonal'>Seasonal operations</option>
-                          <option value='ceased'>Ceased operations</option>
-                          <option value='sold'>Sold operations</option>
-                          <option value='amalgamated'>Amalgamated</option>
-                          <option value='inactive'>Temporarily inactive</option>
-                          <option value='other'>Other</option>
+                          <option value='21'>Seasonal operations</option>
+                          <option value='22'>Ceased operations</option>
+                          <option value='23'>Sold operations</option>
+                          <option value='24'>Amalgamated</option>
+                          <option value='25'>
+                            Temporarily inactive but re-open
+                          </option>
+                          <option value='29'>Other</option>
                         </Form.Select>
                       )}
                     />
@@ -413,18 +454,14 @@ export default function IdentifyParticulateEntry() {
                     )}
                   </Form.Group>
                 )}
-                {whyNotOperational === 'seasonal' && (
-                  <SeasonalOperationDetails />
-                )}
-                {whyNotOperational === 'ceased' && <CeasedOperationDetails />}
-                {whyNotOperational === 'sold' && <SoldOperationsForm />}
-                {whyNotOperational === 'amalgamated' && (
+                {whyNotOperational === '21' && <SeasonalOperationDetails />}
+                {whyNotOperational === '22' && <CeasedOperationDetails />}
+                {whyNotOperational === '23' && <SoldOperationsForm />}
+                {whyNotOperational === '24' && (
                   <AmalgamatedForm handleCompanyData={handleCompanyData} />
                 )}
-                {whyNotOperational === 'inactive' && (
-                  <TemporarilyInactiveForm />
-                )}
-                {whyNotOperational === 'other' && <NoLongerOperatingForm />}
+                {whyNotOperational === '25' && <TemporarilyInactiveForm />}
+                {whyNotOperational === '29' && <NoLongerOperatingForm />}
               </Row>
             </Card.Text>
           </Card.Body>
