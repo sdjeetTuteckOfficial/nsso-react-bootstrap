@@ -57,15 +57,15 @@ const QuestionSevenForm = () => {
                 <Form.Check
                   type='radio'
                   label='Yes'
-                  value='yes'
-                  checked={field.value === 'yes'}
+                  value='1'
+                  checked={field.value === '1'}
                   onChange={field.onChange}
                 />
                 <Form.Check
                   type='radio'
                   label='No'
-                  value='no'
-                  checked={field.value === 'no'}
+                  value='2'
+                  checked={field.value === '2'}
                   onChange={field.onChange}
                 />
               </>
@@ -73,7 +73,7 @@ const QuestionSevenForm = () => {
           />
         </Form.Group>
 
-        {hasAmalgamated === 'yes' && (
+        {hasAmalgamated === '1' && (
           <>
             <Form.Group as={Col} lg='12' md='12' sm='12'>
               <Form.Label>
