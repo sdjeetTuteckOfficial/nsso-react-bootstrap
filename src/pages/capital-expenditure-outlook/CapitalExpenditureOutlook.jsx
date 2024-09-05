@@ -99,6 +99,7 @@ const CapitalExpenditureOutlook = () => {
 
   const {
     control,
+    watch,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -106,6 +107,108 @@ const CapitalExpenditureOutlook = () => {
   });
 
   console.log("Schema", schema.fields, errors);
+
+  const val_A01 = watch(["A013", "A015"]);
+  const sumRow_A01 = () => {
+    return val_A01.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A02 = watch(["A023", "A024", "A025"]);
+  const sumRow_A02 = () => {
+    return val_A02.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A03 = watch(["A033", "A034", "A035"]);
+  const sumRow_A03 = () => {
+    return val_A03.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A04 = watch(["A043", "A045"]);
+  const sumRow_A04 = () => {
+    return val_A04.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A05 = watch(["A053"]);
+  const sumRow_A05 = () => {
+    return val_A05.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A06 = watch(["A063"]);
+  const sumRow_A06 = () => {
+    return val_A06.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A07 = watch(["A073", "A075"]);
+  const sumRow_A07 = () => {
+    return val_A07.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+  const val_A08 = watch(["A083", "A085"]);
+  const sumRow_A08 = () => {
+    return val_A08.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
+
+  let finalSum =
+    sumRow_A01() +
+    sumRow_A02() +
+    sumRow_A03() +
+    sumRow_A04() +
+    sumRow_A05() +
+    sumRow_A06() +
+    sumRow_A07() +
+    sumRow_A08();
+
+  const values = watch([
+    "A101",
+    "A102",
+    "A103",
+    "A104",
+    "A105",
+    "A106",
+    "A107",
+    "A108",
+    "A109",
+    "A110",
+    "A111",
+    "A112",
+    "A113",
+    "A114",
+    "A115",
+    "A116",
+    "A117",
+  ]);
+  const sumRow = () => {
+    return values.reduce((acc, curr) => {
+      const numValue = Number(curr);
+      const validNumber = isNaN(numValue) || numValue < 0 ? 0 : numValue;
+      return acc + validNumber;
+    }, 0);
+  };
 
   const onSubmit = (data) => {
     console.log("form submited...", data);
@@ -510,7 +613,9 @@ const CapitalExpenditureOutlook = () => {
                         </Form.Control.Feedback>
                       </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A01()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -593,7 +698,9 @@ const CapitalExpenditureOutlook = () => {
                         </Form.Control.Feedback>
                       </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A02()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -676,7 +783,9 @@ const CapitalExpenditureOutlook = () => {
                         </Form.Control.Feedback>
                       </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A03()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>Land</td>
@@ -739,7 +848,9 @@ const CapitalExpenditureOutlook = () => {
                         </Form.Control.Feedback>
                       </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A04()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -786,7 +897,9 @@ const CapitalExpenditureOutlook = () => {
                         </Form.Control.Feedback>
                       </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A05()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -833,7 +946,9 @@ const CapitalExpenditureOutlook = () => {
                         </Form.Control.Feedback>
                       </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A06()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -898,7 +1013,9 @@ const CapitalExpenditureOutlook = () => {
                         </Form.Control.Feedback>
                       </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A07()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -963,7 +1080,9 @@ const CapitalExpenditureOutlook = () => {
                         </Form.Control.Feedback>
                       </Form.Group>
                     </td>
-                    <td style={{ backgroundColor: "#2471dd" }}></td>
+                    <td style={{ backgroundColor: "#2471dd" }}>
+                      {sumRow_A08()}
+                    </td>
                   </tr>
                   <tr>
                     <td style={{ textWrap: "nowrap" }}>
@@ -971,7 +1090,7 @@ const CapitalExpenditureOutlook = () => {
                     </td>
                     <td>A09</td>
                     <td colSpan={4}></td>
-                    <td></td>
+                    <td>{finalSum}</td>
                   </tr>
                 </tbody>
               </Table>
@@ -1435,7 +1554,14 @@ const CapitalExpenditureOutlook = () => {
                   </tr>
                   <tr style={{ textAlign: "center" }}>
                     <th colSpan={2}>Total</th>
-                    <th>100</th>
+                    <th>
+                      {sumRow()}
+                      {sumRow() > 100 && (
+                        <p className="text-danger">
+                          Value should not be more than 100
+                        </p>
+                      )}
+                    </th>
                   </tr>
                 </tbody>
               </Table>

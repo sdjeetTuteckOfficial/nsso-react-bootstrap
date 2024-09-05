@@ -157,6 +157,16 @@ const CapitalExpenditureIntention = () => {
     }, 0);
   };
 
+  let finalSum =
+    sumRow_A01() +
+    sumRow_A02() +
+    sumRow_A03() +
+    sumRow_A04() +
+    sumRow_A05() +
+    sumRow_A06() +
+    sumRow_A07() +
+    sumRow_A08();
+
   const values = watch([
     "a101field",
     "a102field",
@@ -792,7 +802,7 @@ const CapitalExpenditureIntention = () => {
                     </td>
                     <td>A09</td>
                     <td colSpan={4}></td>
-                    <td></td>
+                    <td>{finalSum}</td>
                   </tr>
                 </tbody>
               </Table>
