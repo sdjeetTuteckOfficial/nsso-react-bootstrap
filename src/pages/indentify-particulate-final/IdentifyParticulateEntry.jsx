@@ -5,8 +5,8 @@ import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { Row, Col, Card } from 'react-bootstrap';
-import BasicInformationCard from './basic-information/BasicInformationCard';
-import { enterpriseData, contactInfoData } from './demo-data/data';
+// import BasicInformationCard from './basic-information/BasicInformationCard';
+// import { enterpriseData, contactInfoData } from './demo-data/data';
 import SeasonalOperationDetails from './operations-form/seasonal-details-form/SeasonalDetailsForm';
 import CeasedOperationDetails from './operations-form/ceased-operation-form/CeasedOperationsForm';
 import SoldOperationsForm from './operations-form/sold-operations/SoldOperations';
@@ -17,6 +17,8 @@ import PrincipalActivityQuestion from './operations-form/question-five-form/Prin
 import TurnoverPercentageQuestion from './operations-form/turnover-percentage-form/TurnoverPercentageForm';
 import QuestionSevenForm from './operations-form/question-seven-form/QuestionSevenForm';
 import BusinessOperationLocation from './operations-form/question-four/BusinessOperationLocation';
+import { useDispatch, useSelector } from 'react-redux';
+import { initializeSection } from '../../redux/form-slice/formSlice';
 
 const schema = yup.object().shape({
   operationalStatus: yup.string().required('Operational status is required'),
@@ -246,6 +248,9 @@ export default function IdentifyParticulateEntry() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [whyNotOperational, setWhyNotOperational] = useState('');
   const [amalgamatedCompanyData, setAmalgamatedCompanyData] = useState([]);
+  const dispatch = useDispatch();
+  const form_data_section_1 = useSelector((state) => state.form_data.sections);
+  console.log('form_data_Section', form_data_section_1);
 
   const methods = useForm({
     resolver: yupResolver(schema),
@@ -319,12 +324,17 @@ export default function IdentifyParticulateEntry() {
       r_7_1: data.numberOfEnterprises,
       r_7_2: '',
     };
+    dispatch(
+      initializeSection({
+        section_id: 'section_1',
+        data: { api_data: saved_Data, ui_data: data },
+      })
+    );
     console.log('saved response', saved_Data);
   };
 
   const handleStatusChange = (value) => {
     if (value === '1') {
-      //do setValues
       setWhyNotOperational('');
       setValue('closeDate', null);
       setValue('resumeDate', null);
@@ -332,6 +342,20 @@ export default function IdentifyParticulateEntry() {
       setValue('ceaseDate', null);
       setValue('ceaseComment', '');
       setValue('ceaseReason', '');
+      setValue('soldDate', null);
+      setValue('buyerCIN', '');
+      setValue('buyerLegalName', '');
+      setValue('inactiveDate', null);
+      setValue('resumeDateTemp', null);
+      setValue('inactiveReason', '');
+      setValue('stopDate', null);
+      setValue('stopReason', '');
+      setValue('principalActivity', '');
+      setValue('otherActivity', '');
+      setValue('turnoverPercentage', null);
+      setValue('hasAmalgamated', '');
+      setValue('numberOfEnterprises', null);
+      setValue('enterpriseDetails', null);
     }
     setShowDropdown(value === '2');
   };
@@ -347,11 +371,11 @@ export default function IdentifyParticulateEntry() {
       <Form className='siteForm' onSubmit={methods.handleSubmit(onSubmit)}>
         <div className='d-flex mb-2'>
           <h3 className='page-title'>Identification Particulars Entry</h3>
-          <Button variant='light' type='button'>
+          <Button variant='light' type='submit'>
             Save & Continue <i className='bi bi-arrow-right-short'></i>
           </Button>
         </div>
-        <BasicInformationCard
+        {/* <BasicInformationCard
           items={enterpriseData.items}
           title={enterpriseData.title}
           count={1}
@@ -360,7 +384,7 @@ export default function IdentifyParticulateEntry() {
           items={contactInfoData.items}
           title={contactInfoData.title}
           count={2}
-        />
+        /> */}
         <Card className='questionCard mb-3'>
           <Card.Body>
             <Card.Title>
