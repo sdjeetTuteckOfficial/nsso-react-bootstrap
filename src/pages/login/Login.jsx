@@ -7,12 +7,10 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.svg";
 import loginbg from "../../assets/login-bg.svg";
 import Card from "react-bootstrap/Card";
+import { requiredValidator } from "../../components/validator/CommonValidator";
 
 const schema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Invalid email format")
-    .required("Email is required"),
+  email: requiredValidator("field"),
   password: yup
     .string()
     .min(6, "Password must be at least 6 characters")
@@ -30,9 +28,53 @@ function LoginForm() {
   const navigate = useNavigate();
 
   const onSubmit = (data) => {
-    console.log(data);
-    navigate("/nsso-secured/identify-particulate-2");
+    authenticateUser(data.email, data.password);
   };
+
+  async function authenticateUser(username, password) {
+    const url =
+      "http://10.48.16.236:83/api/SURVEYUSER/v1/SurveyUser/AuthenticateSurveyUserAsync";
+
+    // Payload with user details
+    const payload = {
+      username: username,
+      userId: 0,
+      password: password,
+      userIpAddress: "127.0.0.1", // Example IP address, update as needed
+      connectedThrough: "web", // Example value, update as needed
+      deviceInfo: "Web Browser", // Example value, update as needed
+      isFromWeb: true,
+      industrySurveyId: 0,
+      id: 0,
+      activeUserId: 0,
+      isForceValid: true,
+      message: "Operation Successful",
+      deletionReason: "",
+      isValid: true,
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Authentication Successful:", data);
+      return data; // Return the response data if needed
+    } catch (error) {
+      console.error("Error authenticating user:", error);
+    }
+  }
+
+  // Example usage:
 
   return (
     <Container
