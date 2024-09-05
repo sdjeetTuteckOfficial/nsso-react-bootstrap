@@ -151,18 +151,18 @@ const schema = yup.object().shape({
         .required('Legal name of the resulting enterprise is required'),
     otherwise: () => yup.string().notRequired(),
   }),
-  principalActivity: yup.array().when('operationalStatus', {
+  principalActivity: yup.string().when('operationalStatus', {
     is: (value) => value === '1',
     then: () => yup.string().required('This is required field'),
     otherwise: () =>
-      yup.array().when('additionalInfo', {
+      yup.string().when('additionalInfo', {
         is: (value) => value === '21',
         then: () => yup.string().required('This is required field'),
         otherwise: () =>
-          yup.array().when('additionalInfo', {
+          yup.string().when('additionalInfo', {
             is: (value) => value === '25',
             then: () => yup.string().required('This is required field'),
-            otherwise: () => yup.array().notRequired(),
+            otherwise: () => yup.string().notRequired(),
           }),
       }),
   }),
