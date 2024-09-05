@@ -42,6 +42,22 @@ function SideBar() {
         <Nav.Item
           as="li"
           className="nav-item"
+          onClick={() => navigate("/nsso-secured/home")}
+        >
+          <Nav.Link
+            className={`d-flex nav-link ${_returnIsActive(
+              "/nsso-secured/home"
+            )}`}
+          >
+            {" "}
+            {/* <i className="bi bi-check-circle-fill text-success me-2" /> */}
+            <i className="bi bi-question-circle-fill me-2" />
+            <span>Home</span>
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item
+          as="li"
+          className="nav-item"
           onClick={() => navigate("/nsso-secured/identify-particulate-1")}
         >
           <Nav.Link
@@ -50,8 +66,9 @@ function SideBar() {
             )}`}
           >
             {" "}
-            <i className="bi bi-check-circle-fill text-success me-2" />
-            <span>Identification Particulars 1</span>
+            {/* <i className="bi bi-check-circle-fill text-success me-2" /> */}
+            <i className="bi bi-question-circle-fill me-2" />
+            <span>Identification Particulars</span>
           </Nav.Link>
         </Nav.Item>
         {/* <Nav.Item
