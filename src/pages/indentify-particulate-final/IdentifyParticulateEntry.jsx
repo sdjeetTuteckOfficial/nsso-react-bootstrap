@@ -331,7 +331,7 @@ export default function IdentifyParticulateEntry() {
   const methods = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      operationalStatus: '',
+      operationalStatus: '1',
       additionalInfo: '',
       closeDate: null,
       resumeDate: null,
@@ -598,7 +598,6 @@ export default function IdentifyParticulateEntry() {
         {getValues('operationalStatus') === '1' && <QuestionSevenForm />}
         {(whyNotOperational === '21' && <QuestionSevenForm />) ||
           (whyNotOperational === '25' && <QuestionSevenForm />)}
-
         <div className='footerBtnGroup d-flex justify-content-end'>
           <Button variant='primary' className='ms-2' type='submit'>
             Save & Continue <i className='bi bi-arrow-right-short'></i>
