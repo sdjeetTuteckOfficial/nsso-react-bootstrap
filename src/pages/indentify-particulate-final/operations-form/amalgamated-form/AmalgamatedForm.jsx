@@ -1,11 +1,19 @@
+import React, { useState } from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
-import { Row, Col, Form } from 'react-bootstrap';
+import { Row, Col, Form, Button } from 'react-bootstrap';
+import MultiCompanyCin from './multiple-company-cin/MultiCompanyCin';
 
 function AmalgamatedForm() {
+  const [showMultiCompanyCin, setShowMultiCompanyCin] = useState(false);
   const {
     control,
     formState: { errors },
   } = useFormContext();
+
+  // Function to handle MultiCompanyCin form submission
+  const handleMultiCompanyCinSubmit = () => {
+    setShowMultiCompanyCin(false); // Hide the MultiCompanyCin form
+  };
 
   return (
     <Row>
@@ -26,6 +34,7 @@ function AmalgamatedForm() {
           <p className='text-danger'>{errors.amalgamateDate.message}</p>
         )}
       </Form.Group>
+
       <Form.Group as={Col} lg='6' md='6' sm='12'>
         <Form.Label>
           What is the CIN of the resulting or continuing enterprise?
@@ -46,7 +55,6 @@ function AmalgamatedForm() {
         )}
       </Form.Group>
 
-      {/* Legal Name of the Resulting Enterprise */}
       <Form.Group as={Col} lg='6' md='6' sm='12'>
         <Form.Label>
           What is the Legal name of the resulting or continuing enterprise?
@@ -66,6 +74,22 @@ function AmalgamatedForm() {
           <p className='text-danger'>{errors.resultingLegalName.message}</p>
         )}
       </Form.Group>
+
+      <Col lg='12' className='text-start mt-4'>
+        <Button
+          variant='primary'
+          size='sm'
+          onClick={() => setShowMultiCompanyCin(true)}
+        >
+          Add previous company legal name and CIN
+        </Button>
+      </Col>
+
+      {showMultiCompanyCin && (
+        <Col lg='12' className='mt-4'>
+          <MultiCompanyCin onSubmit={handleMultiCompanyCinSubmit} />
+        </Col>
+      )}
     </Row>
   );
 }
