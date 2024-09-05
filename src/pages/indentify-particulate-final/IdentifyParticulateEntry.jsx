@@ -16,6 +16,8 @@ import AmalgamatedForm from './operations-form/amalgamated-form/AmalgamatedForm'
 import PrincipalActivityQuestion from './operations-form/question-five-form/PrincipalActivityQuestion';
 import TurnoverPercentageQuestion from './operations-form/turnover-percentage-form/TurnoverPercentageForm';
 import QuestionSevenForm from './operations-form/question-seven-form/QuestionSevenForm';
+import { initializeSection } from '../../redux/form-slice/formSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import BusinessOperationLocation from './operations-form/question-four/BusinessOperationLocation';
 
 const schema = yup.object().shape({
@@ -246,6 +248,9 @@ export default function IdentifyParticulateEntry() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [whyNotOperational, setWhyNotOperational] = useState('');
   const [amalgamatedCompanyData, setAmalgamatedCompanyData] = useState([]);
+  const dispatch = useDispatch();
+  const sections = useSelector((state) => state.form_data.sections);
+  console.log('sections', sections);
 
   const methods = useForm({
     resolver: yupResolver(schema),
@@ -281,6 +286,7 @@ export default function IdentifyParticulateEntry() {
 
   const onSubmit = (data) => {
     console.log(data);
+    dispatch(initializeSection({ section_id: 'section_1', data }));
   };
 
   const handleStatusChange = (value) => {

@@ -4,7 +4,7 @@ const initialState = {
   sections: {},
 };
 
-const dataSlice = createSlice({
+const formSlice = createSlice({
   name: 'form_data',
   initialState,
   reducers: {
@@ -13,6 +13,7 @@ const dataSlice = createSlice({
       state.sections[section_id] = { ...state.sections[section_id], ...data };
     },
     initializeSection: (state, action) => {
+      console.log('payload', action.payload);
       const { section_id, data } = action.payload;
       state.sections[section_id] = data;
     },
@@ -24,5 +25,5 @@ const dataSlice = createSlice({
 });
 
 export const { setSectionData, initializeSection, clearSection } =
-  dataSlice.actions;
-export default dataSlice.reducer;
+  formSlice.actions;
+export default formSlice.reducer;
