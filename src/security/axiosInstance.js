@@ -5,7 +5,7 @@ let baseURL = '';
 
 switch (ENV) {
   case 'localhost':
-    baseURL = `nsso-secured/module/`;
+    baseURL = `http://10.48.16.236:83/api`;
     // baseURL = `${NetworkSettings.auth.local.host}${NetworkSettings.auth.local.module}`;
     break;
   default:
@@ -18,7 +18,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = 1234;
+    const token = sessionStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

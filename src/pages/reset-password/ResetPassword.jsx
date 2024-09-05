@@ -47,25 +47,26 @@ const ForgotPassword = () => {
     const url =
       'http://10.48.16.236:83/api/SURVEYUSER/v1/SurveyUser/ChangePasswordSurveyUserAsync';
     const payload = {
-      userId: 0,
-      surveyId: 0,
+      userId: parseInt(sessionStorage.getItem('user_id')),
+      surveyId: parseInt(sessionStorage.getItem('industrySurveyId')),
       industryId: 0,
-      // "surveyUserName": "string",
+      surveyUserName: sessionStorage.getItem('userName'),
       oldPassword: data.password,
       newPassword: data.confirmPassword,
       id: 0,
       activeUserId: 0,
       isForceValid: true,
       message: 'Operation Successful',
-      // deletionReason: 'string',
+      deletionReason: 'should_pass_change',
       isValid: true,
     };
-
+    const token = sessionStorage.getItem('token');
     try {
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -74,6 +75,10 @@ const ForgotPassword = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
+      if (data.isValid) {
+        navigate('/');
+        sessionStorage.clear();
+      }
       return data; // Return the response data if needed
     } catch (error) {
       console.error('Error authenticating user:', error);
