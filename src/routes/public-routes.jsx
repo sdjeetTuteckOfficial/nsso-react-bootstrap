@@ -26,7 +26,7 @@ function PublicRoutes() {
       errorElement: <PageNotFound />,
     },
     {
-      path: '/reset-password',
+      path: 'reset-password',
       element: <ResetPassword />,
       errorElement: <PageNotFound />,
     },

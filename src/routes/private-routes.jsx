@@ -7,7 +7,7 @@ export default function ProtectedRoutes() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = 1234; //get from localstorage
+    const token = sessionStorage.getItem('token');
     if (!token) {
       navigate('/');
     }
