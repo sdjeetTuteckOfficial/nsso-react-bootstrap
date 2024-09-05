@@ -349,7 +349,7 @@ export default function IdentifyParticulateEntry() {
       principalActivity: '',
       otherActivity: '',
       turnoverPercentage: null,
-      hasAmalgamated: '',
+      hasAmalgamated: '2',
       numberOfEnterprises: null,
       enterpriseDetails: null,
     },
