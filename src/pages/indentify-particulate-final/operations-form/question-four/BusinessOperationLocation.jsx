@@ -1,6 +1,7 @@
 import Select from 'react-select';
 import { Controller, useFormContext } from 'react-hook-form';
 import { Form, Row, Col, Card } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
 const indianStates = [
   { value: 'andhra-pradesh', label: 'Andhra Pradesh' },
@@ -45,6 +46,17 @@ const BusinessOperationLocation = () => {
     control,
     formState: { errors },
   } = useFormContext();
+  const reduxData = useSelector((state) => state.responseSlice.data);
+
+  const dropdownData =
+    reduxData?.state_data?.map((item) => {
+      return {
+        label: item.state_name,
+        value: item.id,
+      };
+    }) || [];
+
+  console.log('hohoho', dropdownData, reduxData);
 
   return (
     <Card className='questionCard mb-3'>
@@ -65,7 +77,7 @@ const BusinessOperationLocation = () => {
                 <Select
                   {...field}
                   isMulti
-                  options={indianStates}
+                  options={dropdownData}
                   classNamePrefix='react-select'
                   placeholder='Select states...'
                   isInvalid={!!errors.businessOperationLocation}

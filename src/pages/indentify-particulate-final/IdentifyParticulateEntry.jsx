@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -19,6 +19,7 @@ import QuestionSevenForm from './operations-form/question-seven-form/QuestionSev
 import BusinessOperationLocation from './operations-form/question-four/BusinessOperationLocation';
 import { useDispatch, useSelector } from 'react-redux';
 import { initializeSection } from '../../redux/form-slice/formSlice';
+import { fetchData } from '../../redux/network-slice/slice';
 
 const schema = yup.object().shape({
   operationalStatus: yup.string().required('Operational status is required'),
@@ -251,6 +252,18 @@ export default function IdentifyParticulateEntry() {
   const dispatch = useDispatch();
   const form_data_section_1 = useSelector((state) => state.form_data.sections);
   console.log('form_data_Section', form_data_section_1);
+  useEffect(() => {
+    let url = '/SURVEY/v1/UtilityMaster/GetAllStateTypesAsync';
+    dispatch(
+      fetchData([
+        {
+          url: url,
+          method: 'GET',
+          key: 'state_data',
+        },
+      ])
+    );
+  }, []);
 
   const methods = useForm({
     resolver: yupResolver(schema),
@@ -326,7 +339,7 @@ export default function IdentifyParticulateEntry() {
     };
     dispatch(
       initializeSection({
-        section_id: 'section_1',
+        section_id: 'section_2',
         data: { api_data: saved_Data, ui_data: data },
       })
     );
