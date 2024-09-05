@@ -5,8 +5,6 @@ import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { Row, Col, Card } from 'react-bootstrap';
-// import BasicInformationCard from './basic-information/BasicInformationCard';
-// import { enterpriseData, contactInfoData } from './demo-data/data';
 import SeasonalOperationDetails from './operations-form/seasonal-details-form/SeasonalDetailsForm';
 import CeasedOperationDetails from './operations-form/ceased-operation-form/CeasedOperationsForm';
 import SoldOperationsForm from './operations-form/sold-operations/SoldOperations';
@@ -25,8 +23,7 @@ const schema = yup.object().shape({
   operationalStatus: yup.string().required('Operational status is required'),
   additionalInfo: yup.string().when('operationalStatus', {
     is: (val) => val === '2',
-    then: () =>
-      yup.string().required('Additional info is required when not operational'),
+    then: () => yup.string().required('Please select why not operational'),
     otherwise: () => yup.string().notRequired(),
   }),
   closeDate: yup
@@ -37,7 +34,13 @@ const schema = yup.object().shape({
     )
     .when('additionalInfo', {
       is: (val) => val === '21',
-      then: () => yup.date().nullable().required('Close date is required'),
+      then: () =>
+        yup
+          .date()
+          .nullable()
+          .required(
+            'Provide an approximate date whenever exact date is not available'
+          ),
       otherwise: () => yup.date().nullable().notRequired(),
     }),
   resumeDate: yup
@@ -48,7 +51,13 @@ const schema = yup.object().shape({
     )
     .when('additionalInfo', {
       is: (val) => val === '21',
-      then: () => yup.date().nullable().required('Resume date is required'),
+      then: () =>
+        yup
+          .date()
+          .nullable()
+          .required(
+            'Provide an approximate date whenever exact date is not available'
+          ),
       otherwise: () => yup.date().nullable().notRequired(),
     }),
   ceaseDate: yup
@@ -56,7 +65,12 @@ const schema = yup.object().shape({
     .nullable()
     .when('additionalInfo', {
       is: (val) => val === '22',
-      then: () => yup.date().required('Cease date is required'),
+      then: () =>
+        yup
+          .date()
+          .required(
+            'Provide an approximate date whenever exact date is not available'
+          ),
       otherwise: () => yup.date().notRequired(),
     }),
   ceaseReason: yup.string().when('additionalInfo', {
@@ -78,7 +92,12 @@ const schema = yup.object().shape({
     .nullable()
     .when('additionalInfo', {
       is: (val) => val === '23',
-      then: () => yup.date().required('Cease date is required'),
+      then: () =>
+        yup
+          .date()
+          .required(
+            'Provide an approximate date whenever exact date is not available'
+          ),
       otherwise: () => yup.date().notRequired(),
     }),
   buyerCIN: yup.string().when('additionalInfo', {
@@ -97,7 +116,11 @@ const schema = yup.object().shape({
     .when('additionalInfo', {
       is: (val) => val === '25',
       then: () =>
-        yup.date().required('Date of temporary inactivity is required'),
+        yup
+          .date()
+          .required(
+            'Provide an approximate date whenever exact date is not available'
+          ),
       otherwise: () => yup.date().notRequired(),
     }),
   resumeDateTemp: yup
@@ -105,7 +128,12 @@ const schema = yup.object().shape({
     .nullable()
     .when('additionalInfo', {
       is: (val) => val === '25',
-      then: () => yup.date().required('Expected resume date is required'),
+      then: () =>
+        yup
+          .date()
+          .required(
+            'Provide an approximate date whenever exact date is not available'
+          ),
       otherwise: () => yup.date().notRequired(),
     }),
   inactiveReason: yup.string().when('additionalInfo', {
@@ -123,7 +151,11 @@ const schema = yup.object().shape({
     .when('additionalInfo', {
       is: (val) => val === '29',
       then: () =>
-        yup.date().required('Date of stopping operations is required'),
+        yup
+          .date()
+          .required(
+            'Provide an approximate date whenever exact date is not available'
+          ),
       otherwise: () => yup.date().notRequired(),
     }),
   stopReason: yup.string().when('additionalInfo', {
@@ -137,13 +169,28 @@ const schema = yup.object().shape({
     .nullable()
     .when('additionalInfo', {
       is: (val) => val === '24',
-      then: () => yup.date().required('Amalgamation date is required'),
+      then: () =>
+        yup
+          .date()
+          .required(
+            'Provide an approximate date whenever exact date is not available'
+          ),
       otherwise: () => yup.date().notRequired(),
     }),
   resultingCIN: yup.string().when('additionalInfo', {
     is: (val) => val === '24',
     then: () =>
-      yup.string().required('CIN of the resulting enterprise is required'),
+      yup
+        .string()
+        .matches(
+          /\S/,
+          `CIN number must contain at least one non-space character`
+        )
+        .matches(
+          /^[L|U]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/,
+          'Enter a valid CIN number'
+        )
+        .required('CIN is required'),
     otherwise: () => yup.string().notRequired(),
   }),
   resultingLegalName: yup.string().when('additionalInfo', {
@@ -179,10 +226,30 @@ const schema = yup.object().shape({
     then: () =>
       yup
         .number()
-        .required('Percentage is required')
+        .nullable()
         .min(0, 'Percentage must be at least 0')
         .max(100, 'Percentage must be at most 100'),
-    otherwise: () => yup.number().notRequired(),
+    otherwise: () =>
+      yup.array().when('additionalInfo', {
+        is: (value) => value === '21',
+        then: () =>
+          yup
+            .number()
+            .nullable()
+            .min(0, 'Percentage must be at least 0')
+            .max(100, 'Percentage must be at most 100'),
+        otherwise: () =>
+          yup.number().when('additionalInfo', {
+            is: (value) => value === '25',
+            then: () =>
+              yup
+                .number()
+                .nullable()
+                .min(0, 'Percentage must be at least 0')
+                .max(100, 'Percentage must be at most 100'),
+            otherwise: () => yup.number().notRequired(),
+          }),
+      }),
   }),
   hasAmalgamated: yup.string().required('Please select an option'),
   numberOfEnterprises: yup
@@ -217,28 +284,24 @@ const schema = yup.object().shape({
     then: () =>
       yup
         .array()
-        .min(1, 'At least one state is required')
-        .required('Place of business operation is required'),
+        .min(1, 'Mandatory selection of at least one state or UT')
+        .required('Mandatory selection of at least one state or UT'),
     otherwise: () =>
       yup.array().when('additionalInfo', {
         is: (value) => value === '21',
         then: () =>
           yup
             .array()
-            .min(1, 'At least one state is required during seasonal operation')
-            .required(
-              'Place of business operation during seasonal status is required'
-            ),
+            .min(1, 'Mandatory selection of at least one state or UT')
+            .required('Mandatory selection of at least one state or UT'),
         otherwise: () =>
           yup.array().when('additionalInfo', {
             is: (value) => value === '25',
             then: () =>
               yup
                 .array()
-                .min(1, 'At least one state is required for inactive status')
-                .required(
-                  'Place of business operation for inactive status is required'
-                ),
+                .min(1, 'Mandatory selection of at least one state or UT')
+                .required('Mandatory selection of at least one state or UT'),
             otherwise: () => yup.array().notRequired(),
           }),
       }),
@@ -294,6 +357,7 @@ export default function IdentifyParticulateEntry() {
 
   const {
     setValue,
+    getValues,
     formState: { errors },
   } = methods;
 
@@ -378,8 +442,30 @@ export default function IdentifyParticulateEntry() {
     setAmalgamatedCompanyData(data);
   };
 
+  const handleClearForm = () => {
+    setValue('closeDate', null);
+    setValue('resumeDate', null);
+    setValue('additionalInfo', '');
+    setValue('ceaseDate', null);
+    setValue('ceaseComment', '');
+    setValue('ceaseReason', '');
+    setValue('soldDate', null);
+    setValue('buyerCIN', '');
+    setValue('buyerLegalName', '');
+    setValue('inactiveDate', null);
+    setValue('resumeDateTemp', null);
+    setValue('inactiveReason', '');
+    setValue('stopDate', null);
+    setValue('stopReason', '');
+    setValue('principalActivity', '');
+    setValue('otherActivity', '');
+    setValue('turnoverPercentage', null);
+    setValue('hasAmalgamated', '');
+  };
+
   return (
     <FormProvider {...methods}>
+      {console.log('get', getValues('additionalInfo'))}
       {console.log('err', errors)}
       <Form className='siteForm' onSubmit={methods.handleSubmit(onSubmit)}>
         <div className='d-flex mb-2'>
@@ -388,16 +474,6 @@ export default function IdentifyParticulateEntry() {
             Save & Continue <i className='bi bi-arrow-right-short'></i>
           </Button>
         </div>
-        {/* <BasicInformationCard
-          items={enterpriseData.items}
-          title={enterpriseData.title}
-          count={1}
-        />
-        <BasicInformationCard
-          items={contactInfoData.items}
-          title={contactInfoData.title}
-          count={2}
-        /> */}
         <Card className='questionCard mb-3'>
           <Card.Body>
             <Card.Title>
@@ -466,6 +542,7 @@ export default function IdentifyParticulateEntry() {
                           onChange={(e) => {
                             field.onChange(e.target.value);
                             setWhyNotOperational(e.target.value);
+                            // handleClearForm();
                           }}
                           aria-label='Additional Information'
                           isInvalid={!!methods.formState.errors.additionalInfo}
@@ -503,10 +580,25 @@ export default function IdentifyParticulateEntry() {
             </Card.Text>
           </Card.Body>
         </Card>
-        <BusinessOperationLocation />
-        <PrincipalActivityQuestion />
-        <TurnoverPercentageQuestion />
-        <QuestionSevenForm />
+        {getValues('operationalStatus') === '1' && (
+          <BusinessOperationLocation />
+        )}
+        {(whyNotOperational === '21' && <BusinessOperationLocation />) ||
+          (whyNotOperational === '25' && <BusinessOperationLocation />)}
+        {getValues('operationalStatus') === '1' && (
+          <PrincipalActivityQuestion />
+        )}
+        {(whyNotOperational === '21' && <PrincipalActivityQuestion />) ||
+          (whyNotOperational === '25' && <PrincipalActivityQuestion />)}
+        {getValues('operationalStatus') === '1' && (
+          <TurnoverPercentageQuestion />
+        )}
+        {(whyNotOperational === '21' && <TurnoverPercentageQuestion />) ||
+          (whyNotOperational === '25' && <TurnoverPercentageQuestion />)}
+        {getValues('operationalStatus') === '1' && <QuestionSevenForm />}
+        {(whyNotOperational === '21' && <QuestionSevenForm />) ||
+          (whyNotOperational === '25' && <QuestionSevenForm />)}
+
         <div className='footerBtnGroup d-flex justify-content-end'>
           <Button variant='primary' className='ms-2' type='submit'>
             Save & Continue <i className='bi bi-arrow-right-short'></i>

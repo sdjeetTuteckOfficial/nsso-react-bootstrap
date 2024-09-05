@@ -14,11 +14,19 @@ import {
   ListGroup,
   Alert,
 } from 'react-bootstrap';
+import { cinNumberValidator } from '../../../../../components/validator/CommonValidator';
 
 // Define Yup validation schema
 const schema = yup.object().shape({
   legalName: yup.string().required('Legal name is required'),
-  cin: yup.string().required('CIN is required'),
+  cin: yup
+    .string()
+    .matches(/\S/, `CIN number must contain at least one non-space character`)
+    .matches(
+      /^[L|U]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/,
+      'Enter a valid CIN number'
+    )
+    .required('CIN is required'),
 });
 
 const MultiCompanyCin = ({ handleMultiCompanyCinSubmit }) => {
