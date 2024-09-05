@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { v4 as uuidv4 } from 'uuid';
 import {
   FormControl,
   Button,
@@ -10,6 +11,8 @@ import {
   FormLabel,
   Row,
   Col,
+  ListGroup,
+  Alert,
 } from 'react-bootstrap';
 
 // Define Yup validation schema
@@ -19,6 +22,9 @@ const schema = yup.object().shape({
 });
 
 const MultiCompanyCin = ({ handleMultiCompanyCinSubmit }) => {
+  const [companyList, setCompanyList] = useState([]);
+  const [error, setError] = useState(null); // State to handle the error when exceeding the limit
+
   const {
     register,
     handleSubmit,
@@ -26,19 +32,37 @@ const MultiCompanyCin = ({ handleMultiCompanyCinSubmit }) => {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      legalName: '',
+      cin: '',
+    },
   });
 
-  // Handle form submission
   const handleFormSubmit = (data) => {
-    console.log(data);
-
-    handleMultiCompanyCinSubmit();
+    if (companyList.length >= 5) {
+      setError('You can only add up to 5 companies.'); // Show error message if limit reached
+      return;
+    }
+    const companyData = { id: uuidv4(), ...data };
+    setCompanyList((prevList) => [...prevList, companyData]);
+    handleClear();
+    handleMultiCompanyCinSubmit(companyData);
   };
 
   // Handle form clear
   const handleClear = () => {
-    reset(); // Clear form fields
-    handleMultiCompanyCinSubmit();
+    reset({
+      legalName: '',
+      cin: '',
+    });
+    setError(null); // Clear error message
+  };
+
+  // Handle company deletion from the list
+  const handleDelete = (id) => {
+    const updatedList = companyList.filter((company) => company.id !== id);
+    setCompanyList(updatedList); // Remove company from list
+    setError(null); // Clear error if a company is deleted
   };
 
   return (
@@ -78,11 +102,53 @@ const MultiCompanyCin = ({ handleMultiCompanyCinSubmit }) => {
             onClick={handleSubmit(handleFormSubmit)}
             className='me-2'
           >
-            Submit
+            +
           </Button>
           <Button variant='secondary' onClick={handleClear}>
             Clear
           </Button>
+        </Col>
+      </Row>
+
+      {error && (
+        <Row className='mt-3'>
+          <Col>
+            <Alert variant='danger'>{error}</Alert>{' '}
+            {/* Display error message */}
+          </Col>
+        </Row>
+      )}
+
+      <Row className='mt-4'>
+        <Col>
+          <h5>Company List</h5>
+          <ListGroup>
+            {companyList.length === 0 ? (
+              <div>No companies added yet.</div>
+            ) : (
+              companyList.map((company, index) => (
+                <ListGroup.Item key={company.id}>
+                  <Row>
+                    <Col>
+                      <strong>Legal Name:</strong> {company.legalName}
+                    </Col>
+                    <Col>
+                      <strong>CIN:</strong> {company.cin}
+                    </Col>
+                    <Col className='d-flex justify-content-end'>
+                      <Button
+                        variant='danger'
+                        size='sm'
+                        onClick={() => handleDelete(company.id)}
+                      >
+                        Delete
+                      </Button>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              ))
+            )}
+          </ListGroup>
         </Col>
       </Row>
     </Container>

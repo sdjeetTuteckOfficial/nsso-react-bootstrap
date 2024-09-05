@@ -151,10 +151,20 @@ const schema = yup.object().shape({
         .required('Legal name of the resulting enterprise is required'),
     otherwise: () => yup.string().notRequired(),
   }),
-  principalActivity: yup.string().when('operationalStatus', {
-    is: (val) => val === 'operational',
+  principalActivity: yup.array().when('operationalStatus', {
+    is: (value) => value === 'operational',
     then: () => yup.string().required('This is required field'),
-    otherwise: () => yup.string().notRequired(),
+    otherwise: () =>
+      yup.array().when('additionalInfo', {
+        is: (value) => value === 'seasonal',
+        then: () => yup.string().required('This is required field'),
+        otherwise: () =>
+          yup.array().when('additionalInfo', {
+            is: (value) => value === 'inactive',
+            then: () => yup.string().required('This is required field'),
+            otherwise: () => yup.array().notRequired(),
+          }),
+      }),
   }),
   otherActivity: yup.string().when('principalActivity', {
     is: (val) => val === '118',
@@ -171,7 +181,6 @@ const schema = yup.object().shape({
         .max(100, 'Percentage must be at most 100'),
     otherwise: () => yup.number().notRequired(),
   }),
-
   hasAmalgamated: yup.string().required('Please select an option'),
   numberOfEnterprises: yup
     .number()
@@ -185,6 +194,7 @@ const schema = yup.object().shape({
           .min(1, 'Must be at least 1'),
       otherwise: () => yup.number().notRequired(),
     }),
+
   enterpriseDetails: yup.array().of(
     yup.object().shape({
       name: yup.string().when('numberOfEnterprises', {
@@ -235,6 +245,7 @@ const schema = yup.object().shape({
 export default function IdentifyParticulateEntry() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [whyNotOperational, setWhyNotOperational] = useState('');
+  const [amalgamatedCompanyData, setAmalgamatedCompanyData] = useState([]);
 
   const methods = useForm({
     resolver: yupResolver(schema),
@@ -284,6 +295,11 @@ export default function IdentifyParticulateEntry() {
       setValue('ceaseReason', '');
     }
     setShowDropdown(value === 'non-operational');
+  };
+
+  const handleCompanyData = (data) => {
+    console.log(data);
+    setAmalgamatedCompanyData(data);
   };
 
   return (
@@ -402,7 +418,9 @@ export default function IdentifyParticulateEntry() {
                 )}
                 {whyNotOperational === 'ceased' && <CeasedOperationDetails />}
                 {whyNotOperational === 'sold' && <SoldOperationsForm />}
-                {whyNotOperational === 'amalgamated' && <AmalgamatedForm />}
+                {whyNotOperational === 'amalgamated' && (
+                  <AmalgamatedForm handleCompanyData={handleCompanyData} />
+                )}
                 {whyNotOperational === 'inactive' && (
                   <TemporarilyInactiveForm />
                 )}
