@@ -8,6 +8,8 @@ import logo from '../../assets/logo.svg';
 import loginbg from '../../assets/login-bg.svg';
 import Card from 'react-bootstrap/Card';
 import { requiredValidator } from '../../components/validator/CommonValidator';
+import { showToast } from '../../redux/toast-slice/toastSlice';
+import { useDispatch } from 'react-redux';
 
 const schema = yup.object().shape({
   email: requiredValidator('field'),
@@ -26,6 +28,7 @@ function LoginForm() {
     resolver: yupResolver(schema),
   });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const onSubmit = (data) => {
     authenticateUser(data.email, data.password);
@@ -91,7 +94,8 @@ function LoginForm() {
       sessionStorage.setItem('industrySurveyId', data2.industrySurveyId);
       console.log('User Details:', data2, data2.isPasswordChanged);
       if (data2?.isPasswordChanged === true) {
-        navigate('/nsso-secured/identify-particulate-2');
+        navigate('/nsso-secured/home');
+        dispatch(showToast({ show: true, message: 'Login successful' }));
       } else {
         navigate('/reset-password');
       }
