@@ -28,11 +28,7 @@ const schema = yup.object().shape({
     .required('CIN is required'),
 });
 
-const MultiCompanyCin = ({
-  handleMultiCompanyCinSubmit,
-  label,
-  countNumber,
-}) => {
+const MultiCinAdd = ({ handleMultiCompanyCinSubmit, label, countNumber }) => {
   const [companyList, setCompanyList] = useState([]);
   const [error, setError] = useState(null); // State to handle the error when exceeding the limit
 
@@ -169,4 +165,4 @@ const MultiCompanyCin = ({
   );
 };
 
-export default MultiCompanyCin;
+export default MultiCinAdd;
