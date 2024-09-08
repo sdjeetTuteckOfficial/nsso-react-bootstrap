@@ -35,6 +35,7 @@ export const IdentificationSchema = yup.object().shape({
         yup
           .date()
           .nullable()
+          .min(yup.ref('closeDate'))
           .required(
             'Provide an approximate date whenever exact date is not available'
           ),
@@ -122,6 +123,10 @@ export const IdentificationSchema = yup.object().shape({
       then: () =>
         yup
           .date()
+          .min(
+            yup.ref('inactiveDate'),
+            'Resume date must be after inactive date'
+          )
           .required(
             'Provide an approximate date whenever exact date is not available'
           ),
