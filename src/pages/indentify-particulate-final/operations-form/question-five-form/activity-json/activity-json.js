@@ -49,3 +49,49 @@ export const aggricultureData = [
     value: '03',
   },
 ];
+export const electricity = [
+  {
+    label: 'Electricity, gas, steam, air conditioning supply',
+    value: 35,
+  },
+];
+
+export const construction = [
+  {
+    label: 'Construction of buildings',
+    value: 41,
+  },
+  {
+    label: 'Civil engineering',
+    value: 42,
+  },
+  {
+    label: 'Specialized construction activities',
+    value: 43,
+  },
+];
+
+export const accomodation = [
+  {
+    label: 'Accomodation',
+    value: 55,
+  },
+  {
+    label: 'Food and beverage service activities',
+    value: 56,
+  },
+];
+
+export const real_estate = [
+  {
+    label: 'Real estate activities',
+    value: 68,
+  },
+];
+
+export const education = [
+  {
+    label: 'Education',
+    value: 85,
+  },
+];

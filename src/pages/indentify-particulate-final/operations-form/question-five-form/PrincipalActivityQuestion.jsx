@@ -2,13 +2,21 @@ import { useState } from 'react';
 import { Form, Col, Card } from 'react-bootstrap';
 import { useFormContext, Controller } from 'react-hook-form';
 import { principalActivities } from './activity-json/activity-json';
-import { aggricultureData } from './activity-json/activity-json';
+import {
+  aggricultureData,
+  accomodation,
+  construction,
+  education,
+  electricity,
+  real_estate,
+} from './activity-json/activity-json';
 
 const PrincipalActivityQuestion = () => {
   const {
     control,
     watch,
     formState: { errors },
+    setValue,
   } = useFormContext();
   const principalActivity = watch('principalActivity');
   const secondaryActivity = watch('secondaryActivity');
@@ -17,6 +25,21 @@ const PrincipalActivityQuestion = () => {
     console.log('hambaaa', value);
     if (value === '101') {
       setDependantDropdownValue(() => aggricultureData);
+    }
+    if (value === '109') {
+      setDependantDropdownValue(() => accomodation);
+    }
+    if (value === '106') {
+      setDependantDropdownValue(() => construction);
+    }
+    if (value === '115') {
+      setDependantDropdownValue(() => education);
+    }
+    if (value === '104') {
+      setDependantDropdownValue(() => electricity);
+    }
+    if (value === '112') {
+      setDependantDropdownValue(() => real_estate);
     }
   };
 
@@ -41,6 +64,7 @@ const PrincipalActivityQuestion = () => {
                   isInvalid={!!errors.principalActivity}
                   onChange={(e) => {
                     field.onChange(e.target.value);
+                    setValue('secondaryActivity', '');
                     handlePrincipalActivityDropdownChange(e.target.value);
                   }}
                 >

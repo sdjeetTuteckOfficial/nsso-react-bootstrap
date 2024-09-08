@@ -82,7 +82,18 @@ export const IdentificationSchema = yup.object().shape({
     }),
   buyerCIN: yup.string().when('additionalInfo', {
     is: (val) => val === '23',
-    then: () => yup.string().required('Buyer CIN is required'),
+    then: () =>
+      yup
+        .string()
+        .matches(
+          /\S/,
+          `CIN number must contain at least one non-space character`
+        )
+        .matches(
+          /^[L|U]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/,
+          'Enter a valid CIN number'
+        )
+        .required('CIN is required'),
     otherwise: () => yup.string().notRequired(),
   }),
   buyerLegalName: yup.string().when('additionalInfo', {
@@ -198,9 +209,10 @@ export const IdentificationSchema = yup.object().shape({
   }),
 
   secondaryActivity: yup.string().when('principalActivity', {
-    is: (val) => val !== '118',
-    then: () => yup.string().required('Please specify secondary the activity'),
-    otherwise: () => yup.string().notRequired(),
+    is: (val) => val === '118',
+    then: () => yup.string().notRequired(),
+    otherwise: () =>
+      yup.string().notRequired('Please specify secondary the activity'),
   }),
 
   otherActivity: yup.string().when('principalActivity', {
@@ -215,7 +227,8 @@ export const IdentificationSchema = yup.object().shape({
         .number()
         .nullable()
         .min(0, 'Percentage must be at least 0')
-        .max(100, 'Percentage must be at most 100'),
+        .max(100, 'Percentage must be at most 100')
+        .required('This field is required'),
     otherwise: () =>
       yup.array().when('additionalInfo', {
         is: (value) => value === '21',
@@ -224,7 +237,8 @@ export const IdentificationSchema = yup.object().shape({
             .number()
             .nullable()
             .min(0, 'Percentage must be at least 0')
-            .max(100, 'Percentage must be at most 100'),
+            .max(100, 'Percentage must be at most 100')
+            .required('This field is required'),
         otherwise: () =>
           yup.number().when('additionalInfo', {
             is: (value) => value === '25',
@@ -233,7 +247,8 @@ export const IdentificationSchema = yup.object().shape({
                 .number()
                 .nullable()
                 .min(0, 'Percentage must be at least 0')
-                .max(100, 'Percentage must be at most 100'),
+                .max(100, 'Percentage must be at most 100')
+                .required('This field is required'),
             otherwise: () => yup.number().notRequired(),
           }),
       }),

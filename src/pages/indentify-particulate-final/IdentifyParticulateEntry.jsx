@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+// import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { Row, Col, Card } from 'react-bootstrap';
@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { initializeSection } from '../../redux/form-slice/formSlice';
 import { fetchData } from '../../redux/network-slice/slice';
 import { IdentificationSchema } from './operations-form/schema/schema';
+import { formatDateToISO } from '../../functions/common-functions';
 
 export default function IdentifyParticulateEntry() {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -64,6 +65,7 @@ export default function IdentifyParticulateEntry() {
       hasAmalgamated: '2',
       numberOfEnterprises: null,
       enterpriseDetails: null,
+      amalgamateDate: null,
       secondaryActivity: '',
     },
   });
@@ -80,31 +82,50 @@ export default function IdentifyParticulateEntry() {
       ? data?.businessOperationLocation?.map((item) => item.value)?.join(',')
       : '';
 
-    console.log('hello', data.closeDate);
+    const sentCloseDate = formatDateToISO(data.closeDate);
+    const sentResumeDate = formatDateToISO(data.resumeDate);
+    const sentCeaseDate = formatDateToISO(data.ceaseDate);
+    const sentSoldDate = formatDateToISO(data.soldDate);
+    const sentAmalgamatedDate = formatDateToISO(data.amalgamateDate);
+    const sentInactiveDate = formatDateToISO(data.inactiveDate);
+    const sentResumeDateTemp = formatDateToISO(data.resumeDateTemp);
+    const sentStopDate = formatDateToISO(data.stopDate);
+
+    console.log(
+      'kya baat ',
+      sentAmalgamatedDate,
+      sentCeaseDate,
+      sentCloseDate,
+      sentInactiveDate,
+      sentCloseDate,
+      sentResumeDate
+    );
+
     const saved_Data = {
       r_3: data.operationalStatus,
       r_3_1: data.additionalInfo,
       r_3_1_1: data.additionalInfo,
-      r_3_1_1_1: new Date(data?.closeDate)?.toISOString()?.split('T')[0],
-      r_3_1_1_2: new Date(data?.resumeDate)?.toISOString()?.split('T')[0],
+      r_3_1_1_1: sentCloseDate,
+      r_3_1_1_2: sentResumeDate,
       r_3_1_2: data.additionalInfo,
-      r_3_1_2_1: new Date(data?.ceaseDate)?.toISOString()?.split('T')[0],
+      r_3_1_2_1: sentCeaseDate,
       r_3_1_2_2: data.ceaseReason,
+      r_3_1_2_3: data.ceaseComment,
       r_3_1_3: data.additionalInfo,
-      r_3_1_3_1: new Date(data?.soldDate)?.toISOString()?.split('T')[0],
+      r_3_1_3_1: sentSoldDate,
       r_3_1_3_2: data.buyerCIN,
       r_3_1_3_3: data.buyerLegalName,
       r_3_1_4: data.additionalInfo,
-      r_3_1_4_1: new Date(data?.amalgamateDate)?.toISOString()?.split('T')[0],
+      r_3_1_4_1: sentAmalgamatedDate,
       r_3_1_4_2: data.resultingCIN,
       r_3_1_4_3: data.resultingLegalName,
       r_3_1_4_4: amalgamatedCompanyData,
       r_3_1_5: data.additionalInfo,
-      r_3_1_5_1: new Date(data?.inactiveDate)?.toISOString()?.split('T')[0],
-      r_3_1_5_2: new Date(data?.resumeDateTemp)?.toISOString()?.split('T')[0],
+      r_3_1_5_1: sentInactiveDate,
+      r_3_1_5_2: sentResumeDateTemp,
       r_3_1_5_3: data.inactiveReason,
       r_3_1_6: data.additionalInfo,
-      r_3_1_6_1: new Date(data?.stopDate)?.toISOString()?.split('T')[0],
+      r_3_1_6_1: sentStopDate,
       r_3_1_6_2: data.stopReason,
       r_4: operatingLocations,
       r_5: data.principalActivity,
@@ -136,7 +157,7 @@ export default function IdentifyParticulateEntry() {
         },
       ])
     );
-    console.log('saved response', saved_Data);
+    // console.log('saved response', saved_Data);
   };
 
   const handleStatusChange = (value) => {
@@ -163,6 +184,7 @@ export default function IdentifyParticulateEntry() {
       setValue('numberOfEnterprises', null);
       setValue('enterpriseDetails', null);
       setValue('secondaryActivity', '');
+      setValue('amalgamateDate', null);
     }
     setShowDropdown(value === '2');
   };
@@ -192,6 +214,7 @@ export default function IdentifyParticulateEntry() {
     setValue('turnoverPercentage', null);
     setValue('hasAmalgamated', '2');
     setValue('secondaryActivity', '');
+    setValue('amalgamateDate', null);
   };
 
   return (
